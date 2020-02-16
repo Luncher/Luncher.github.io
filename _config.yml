@@ -68,7 +68,7 @@ pagination_dir: page
 deploy: 
   type: git
   repo: git@github.com:Luncher/Luncher.github.io.git
-
+  branch: master
 
 # Extensions
 ## Plugins: https://hexo.io/plugins/
