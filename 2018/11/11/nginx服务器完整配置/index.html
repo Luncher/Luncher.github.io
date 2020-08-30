@@ -1,0 +1,2984 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8" />
+
+<meta name="generator" content="Hexo 4.2.0" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+<title>nginx服务器完整配置 - I am lin chen</title>
+
+
+    <meta name="description" content="基本参数配置 main context配置:  worker进程启动用户、用户组1user nginx nginx; worker进程数量1worker_processes  2; master进程id存放的文件位置1pid &#x2F;home&#x2F;www&#x2F;nginx&#x2F;nginx.pid;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx服务器完整配置">
+<meta property="og:url" content="https://luncher.github.io/2018/11/11/nginx%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%8C%E6%95%B4%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="I am lin chen">
+<meta property="og:description" content="基本参数配置 main context配置:  worker进程启动用户、用户组1user nginx nginx; worker进程数量1worker_processes  2; master进程id存放的文件位置1pid &#x2F;home&#x2F;www&#x2F;nginx&#x2F;nginx.pid;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luncher.github.io/images/og_image.png">
+<meta property="article:published_time" content="2018-11-11T09:01:39.000Z">
+<meta property="article:modified_time" content="2020-02-17T16:51:08.886Z">
+<meta property="article:author" content="clin">
+<meta property="article:tag" content="nginx">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luncher.github.io/images/og_image.png">
+
+
+
+
+
+
+
+<link rel="icon" href="/images/favicon.ico">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+<style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+    
+    
+    
+    
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/favicon.ico" alt="nginx服务器完整配置" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/">主页</a>
+                
+                <a class="navbar-item"
+                href="/archives">归档</a>
+                
+                <a class="navbar-item"
+                href="/categories">分类</a>
+                
+                <a class="navbar-item"
+                href="/tags">标签</a>
+                
+                <a class="navbar-item"
+                href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    <a class="navbar-item" target="_blank" rel="noopener" title="GitHub" href="https://github.com/luncher">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2018-11-11T09:01:39.000Z">2018-11-11</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/server/">server</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    22 分钟 读完 (大约 3289 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                nginx服务器完整配置
+            
+        </h1>
+        <div class="content">
+            <h3 id="基本参数配置"><a href="#基本参数配置" class="headerlink" title="基本参数配置"></a>基本参数配置</h3><ul>
+<li><code>main context</code>配置:</li>
+</ul>
+<h4 id="worker进程启动用户、用户组"><a href="#worker进程启动用户、用户组" class="headerlink" title="worker进程启动用户、用户组"></a>worker进程启动用户、用户组</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">user nginx nginx;</span><br></pre></td></tr></table></figure>
+<h4 id="worker进程数量"><a href="#worker进程数量" class="headerlink" title="worker进程数量"></a>worker进程数量</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_processes  2;</span><br></pre></td></tr></table></figure>
+<h4 id="master进程id存放的文件位置"><a href="#master进程id存放的文件位置" class="headerlink" title="master进程id存放的文件位置"></a>master进程id存放的文件位置</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid /home/www/nginx/nginx.pid;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h4 id="错误日志"><a href="#错误日志" class="headerlink" title="错误日志"></a>错误日志</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">error_log /home/www/nginx/log/error.log warn;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>前面是文件存放的位置，后面是日志的错误等级。如果要设置为<code>debug</code>需要在编译<code>nginx</code>的时候加上<code>--with-debug</code>选项。</p>
+</blockquote>
+<h4 id="设置单个worker进程的最大连接数"><a href="#设置单个worker进程的最大连接数" class="headerlink" title="设置单个worker进程的最大连接数"></a>设置单个worker进程的最大连接数</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">events &#123;</span><br><span class="line">  worker_connections  512;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里的最大连接数包括了，和代理服务器的连接、和客户端的连接等。另外需要注意的是，实际同时建立的最大连接数不能超过最大允许打开的文件数量。可以通过<code>worker_rlimit_nofile</code>选项来配置。</p>
+</blockquote>
+<h4 id="设置单个worker进程最大允许打开文件数量"><a href="#设置单个worker进程最大允许打开文件数量" class="headerlink" title="设置单个worker进程最大允许打开文件数量"></a>设置单个worker进程最大允许打开文件数量</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">worker_rlimit_nofile  8192;</span><br></pre></td></tr></table></figure>
+<p><code>main context</code>配置预览:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">user nginx nginx;</span><br><span class="line">worker_processes  2;</span><br><span class="line">pid   /home/www/nginx/nginx.pid;</span><br><span class="line">error_log /home/www/nginx/log/error.log warn;</span><br><span class="line">worker_rlimit_nofile  2048;</span><br><span class="line">events &#123;</span><br><span class="line">  worker_connections  1024;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>main context</code>的配置可以参考<a href="https://nginx.org/en/docs/ngx_core_module.html">ngx_core_module</a>。</p>
+<ul>
+<li><code>http block</code>配置:</li>
+</ul>
+<h4 id="设置http请求日志"><a href="#设置http请求日志" class="headerlink" title="设置http请求日志"></a>设置http请求日志</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                  '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                  '"$http_user_agent" "$http_x_forwarded_for"';</span><br><span class="line">access_log  /home/www/nginx/log/access.log  main;</span><br></pre></td></tr></table></figure>
+<h4 id="定义MIME-type-到文件拓展名的映射"><a href="#定义MIME-type-到文件拓展名的映射" class="headerlink" title="定义MIME type 到文件拓展名的映射"></a>定义MIME type 到文件拓展名的映射</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">include       /etc/nginx/mime.types;</span><br><span class="line"><span class="meta">#</span><span class="bash">默认的MIME <span class="built_in">type</span></span></span><br><span class="line">default_type  application/octet-stream;</span><br></pre></td></tr></table></figure>
+<h4 id="优化文件传送"><a href="#优化文件传送" class="headerlink" title="优化文件传送"></a>优化文件传送</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">磁盘文件从内核态直接发送到网卡设备，避免了拷贝到用户态的开销。</span></span><br><span class="line">sendfile       on;</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">开启TCP_CORK选项，当数据包达到固定大小才开始传送。</span></span><br><span class="line">tcp_nopush     on;</span><br></pre></td></tr></table></figure>
+<h4 id="设置客户端连接超时时间"><a href="#设置客户端连接超时时间" class="headerlink" title="设置客户端连接超时时间"></a>设置客户端连接超时时间</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keepalive_timeout  65s;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>当时间超过65秒，客户端到服务器的连接将会断开。可以把时间设置的稍微短一些，加快无用连接的回收。</p>
+</blockquote>
+<h4 id="开启基本文件目录功能"><a href="#开启基本文件目录功能" class="headerlink" title="开启基本文件目录功能"></a>开启基本文件目录功能</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">autoindex on;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>autoindex</code>依赖于<a href="https://nginx.org/en/docs/http/ngx_http_autoindex_module.html">ngx_http_autoindex_module</a>。</p>
+</blockquote>
+<p><code>http block</code>配置预览：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">  include       /etc/nginx/mime.types;</span><br><span class="line">  default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                       '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                       '"$http_user_agent" "$http_x_forwarded_for"';</span><br><span class="line"></span><br><span class="line">  access_log  /home/www/nginx/log/access.log  main;</span><br><span class="line"></span><br><span class="line">  sendfile        on;</span><br><span class="line">  tcp_nopush      on;</span><br><span class="line"></span><br><span class="line">  keepalive_timeout  65s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="反向代理配置"><a href="#反向代理配置" class="headerlink" title="反向代理配置"></a>反向代理配置</h3><p>反向代理相关的配置一般都放置在<code>nginx/conf.d</code>目录下，以<code>hostname</code>命名。</p>
+<h4 id="虚拟主机与请求的分发"><a href="#虚拟主机与请求的分发" class="headerlink" title="虚拟主机与请求的分发"></a>虚拟主机与请求的分发</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">listen 443 ssl default_server;</span><br><span class="line">server_name bitsum.pro *.bitsum.pro;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一个<code>server block</code>对应一个虚拟主机的配置，<code>default_server</code>当请求找不到虚拟主机的时候，该虚拟主机作为默认的虚拟主机接受请求。</p>
+</blockquote>
+<h4 id="定义反向代理的host、负载均衡"><a href="#定义反向代理的host、负载均衡" class="headerlink" title="定义反向代理的host、负载均衡"></a>定义反向代理的<code>host</code>、负载均衡</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">upstream backend_hosts &#123;</span><br><span class="line">  server  47.75.216.4;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>upstream</code>block里面可以配置负载均衡算法、权重等信息。</p>
+</blockquote>
+<p><strong>几种负载均衡算法：</strong></p>
+<ul>
+<li>round robin<blockquote>
+<p>默认的均衡算法，客户端请求被轮流分配到上游服务器。</p>
+</blockquote>
+</li>
+<li>least_conn<blockquote>
+<p>新的客户端连接被分配到最少活跃连接数的上游服务器。</p>
+</blockquote>
+</li>
+<li>ip_hash<blockquote>
+<p>用客户端ip做为hash的key，前三位8字节决定哪一个服务器处理这个客户端请求。这种算法可以保证<code>session</code>一致性。</p>
+</blockquote>
+</li>
+<li>hash<blockquote>
+<p>基于客户端传递的数据做hash。</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>设置服务器权重:</strong><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">upstream backend_hosts &#123;</span><br><span class="line">  server host1.example.com weight=3;</span><br><span class="line">  server host2.example.com;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>默认每一个<code>host</code>的权重都是1，<code>host1</code>接受的请求量将会是<code>host2</code>的三倍。</p>
+</blockquote>
+<h4 id="指定上游被代理的服务器、设置额外的请求头"><a href="#指定上游被代理的服务器、设置额外的请求头" class="headerlink" title="指定上游被代理的服务器、设置额外的请求头"></a>指定上游被代理的服务器、设置额外的请求头</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">location / &#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">所有请求都被转发到`backend_hosts`</span></span><br><span class="line">  proxy_pass  http://backend_hosts;</span><br><span class="line"><span class="meta">  #</span><span class="bash">设置客户端请求host</span></span><br><span class="line">  proxy_set_header    HOST $host;</span><br><span class="line"><span class="meta">  #</span><span class="bash">设置客户端请求协议(http、https)</span></span><br><span class="line">  proxy_set_header    X-Forwarded-Proto $scheme;</span><br><span class="line"><span class="meta">  #</span><span class="bash">把客户端的真实ip通过`X-Real-IP`透传到上游服务器</span></span><br><span class="line">  proxy_set_header    X-Real-IP $remote_addr;</span><br><span class="line"><span class="meta">  #</span><span class="bash">代理服务器地址列表、上层代理服务器地址添加到后面</span></span><br><span class="line">  proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用Buffer缓存数据"><a href="#使用Buffer缓存数据" class="headerlink" title="使用Buffer缓存数据"></a>使用Buffer缓存数据</h3><p><em>为什么<code>buffer</code>能优化代理请求呢？</em></p>
+<p>当没有开启<code>buffer</code>的时候，被代理的上游服务器的数据立刻被代理服务器转送到客户端。如果客户端处理的足够快，可以关闭<code>buffer</code>的功能，以便客户端尽可能快的获得数据。当<code>buffer</code>功能开启的时候，代理服务器会暂存上游服务器返回的数据，然后再反馈给客户端。如果客户端接受数据的速度过慢，<code>nginx</code>会关闭到代理服务器的连接。然后以适合的速度发送数据给客户端。</p>
+<p><code>Buffer</code>相关配置命令:</p>
+<ul>
+<li><p>proxy_buffering</p>
+<blockquote>
+<p>控制是否开启<code>buffering</code>功能。</p>
+</blockquote>
+</li>
+<li><p>proxy_buffers</p>
+<blockquote>
+<p>控制缓存代理响应的块的个数以及大小。</p>
+</blockquote>
+</li>
+<li><p>proxy_buffer_size</p>
+<blockquote>
+<p>控制缓存代理响应头部的大小, 默认等于proxy_buffers配置的<code>size</code>大小，由于响应头比较小，可以适当设置小一点。(当proxy_buffering关闭的时候，依然可以使用。)</p>
+</blockquote>
+</li>
+<li><p>proxy_busy_buffers_size</p>
+<blockquote>
+<p>控制发送数据给客户端的缓存的大小。</p>
+</blockquote>
+</li>
+<li><p>proxy_max_temp_file_size</p>
+<blockquote>
+<p>当上游服务器的响应过大的时候，会被缓存在一个临时的磁盘文件里面。该指令配置缓存文件的大小。</p>
+</blockquote>
+</li>
+<li><p>proxy_temp_file_write_size</p>
+<blockquote>
+<p>当上游服务器的响应过大的时候，会被缓存在一个临时的磁盘文件里面。该指令配置一次写入缓存文件的数据大小。</p>
+</blockquote>
+</li>
+<li><p>proxy_temp_path</p>
+<blockquote>
+<p>缓存临时文件存放目录。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="设置Cache缓存静态数据"><a href="#设置Cache缓存静态数据" class="headerlink" title="设置Cache缓存静态数据"></a>设置<code>Cache</code>缓存静态数据</h3><p><code>Cache</code>相关配置命令:</p>
+<ul>
+<li>proxy_cache_path<br>基本格式：<br><code>proxy_cache_path    /home/www/nginx/cache   levels=1:2  keys_zone=backcache:8m max_size=50m use_temp_path=off;</code><blockquote>
+<p><code>/home/www/nginx/cache</code>作为缓存路径，如果不存在需要新建，并且设置好目录的权限：</p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /home/www/nginx/cache</span><br><span class="line"><span class="meta">#</span><span class="bash">根据启动worker进程的用户, 这里设置为对应的用户</span></span><br><span class="line">sudo chown nginx.nginx /home/www/nginx/cache</span><br><span class="line">sudo chmod 700 /home/www/nginx/cache</span><br></pre></td></tr></table></figure>
+<p><code>levels</code>设置缓存的目录结构层次，缓存<code>key</code>的最后一个字节作为一级子目录的名称，倒数二三两个字节作为二级缓存子目录的名称。</p>
+<p><code>keys_zone</code>定义缓存区域的名称，这里称之为<code>backcache</code>。最多有8m的缓存<code>key</code>，缓存数据的最大大小为<code>50m</code>。</p>
+<ul>
+<li>proxy_cache_key(定义缓存<code>key</code>的格式)<br>基本格式：<br><code>proxy_cache_key     &quot;$scheme$request_method$host$request_uri$is_args$args&quot;;</code></li>
+</ul>
+<ul>
+<li>proxy_cache_valid<br>基本格式：<br><code>proxy_cache_valid   404 1m;</code><blockquote>
+<p>根据状态码来控制缓存的有效时间，上例中，缓存404响应的有效时间为1分钟。</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>启用Cache</strong><br>上面定义了<code>cache</code>的基本配置，现在要告诉<code>nginx</code>那里应该开启<code>cache</code>。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">location ~ ^/(admin|download|miner-client|mobile|static|website)/ &#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">使用backcache这个cache zone</span></span><br><span class="line">  proxy_cache backcache;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">允许客户端通过http请求头控制跳过缓存请求最新的数据</span></span><br><span class="line">  proxy_cache_bypass  $http_cache_control;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">添加一个头部信息，对于一个请求可以清晰的看到，是被缓存了、缓存失效等状态信息。</span></span><br><span class="line">  add_header X-Proxy-Cache $upstream_cache_status;</span><br><span class="line"></span><br><span class="line">  proxy_pass  http://backend_hosts;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>开启gzip压缩</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line"><span class="meta">  #</span><span class="bash">开启gzip压缩功能</span></span><br><span class="line">  gzip on;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">设置启用gzip的http版本信息</span></span><br><span class="line">  gzip_http_version   1.0;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">设置gzip压缩等级</span></span><br><span class="line">  gzip_comp_level   5;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">设置当Content-Length大于256的时候启用gzip配置</span></span><br><span class="line">  gzip_min_length   256;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">对所有的代理请求都启用gzip</span></span><br><span class="line">  gzip_proxied  any;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">添加“Vary: Accept-Encoding”到请求头部告知代理服务器是否支持gzip压缩</span></span><br><span class="line">  gzip_vary   on;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">设置需要压缩的MIME types</span></span><br><span class="line">  gzip_types</span><br><span class="line">    application/atom+xml</span><br><span class="line">    application/javascript</span><br><span class="line">    application/json</span><br><span class="line">    application/rss+xml</span><br><span class="line">    application/vnd.ms-fontobject</span><br><span class="line">    application/x-font-ttf</span><br><span class="line">    application/x-web-app-manifest+json</span><br><span class="line">    application/xhtml+xml</span><br><span class="line">    application/xml</span><br><span class="line">    font/opentype</span><br><span class="line">    image/svg+xml</span><br><span class="line">    image/x-icon</span><br><span class="line">    text/css</span><br><span class="line">    text/plain</span><br><span class="line">    text/x-component;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="给你的网站加上https证书"><a href="#给你的网站加上https证书" class="headerlink" title="给你的网站加上https证书"></a>给你的网站加上https证书</h3><p>要给网站开启<code>https</code>，那么你需要从证书颁发机构(CA)获得一个证书文件，<a href="https://letsencrypt.org/">letsencrypt</a>是一个免费开放的证书颁发机构。接下来，你需要证明这个域名你实际拥有控制权，这需要通过<a href="https://ietf-wg-acme.github.io/acme/">ACME protocol</a>协议来保障。</p>
+<p><a href="https://certbot.eff.org/">certbot</a>是一个<code>ACME</code>的客户端，在你的主机运行它自动生成证书文件，与此同时主机不需要停机。</p>
+<p>letsencrypt原理图：</p>
+<p><img src="/images/letEncrypt原理图.png" alt="letEncrypt"></p>
+<blockquote>
+<p>LetEncrypt会发送请求到<code>ACME</code>运行的服务器，校验所有权是否合法。</p>
+</blockquote>
+<p>接下来看看如何配置：</p>
+<p>因为系统主机安装了<code>docker</code>，<code>certbot</code>刚好也有对应的镜像文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo docker run -it --name certbot  -p 80:80 \</span><br><span class="line">  -v /home/www/nginx/html:/usr/share/nginx/html \</span><br><span class="line">  -v /home/www/mycertificate/letsencrypt:/etc/letsencrypt \</span><br><span class="line">  -v /home/www/mycertificate/letsencrypt-lib/:/var/lib/letsencrypt \</span><br><span class="line">  certbot/certbot certonly</span><br></pre></td></tr></table></figure>
+<p>允许上面命令的时候，会出现一系列交互提示出现：</p>
+<p>How would you like to authenticate with the ACME CA?</p>
+<hr>
+<p>1: Spin up a temporary webserver (standalone)<br>2: Place files in webroot directory (webroot)</p>
+<hr>
+<p>Select the appropriate number [1-2] then [enter] (press ‘c’ to cancel):</p>
+<p>因为代理服务器还没有启动起来，这里选择<code>standalone</code>模式，就把<code>ACME</code>当作一个临时的web服务器。</p>
+<p>Plugins selected: Authenticator standalone, Installer None<br>Enter email address (used for urgent renewal and security notices) (Enter ‘c’ to<br>cancel):</p>
+<p>要求填写一个邮箱地址，接受证书过期的提示，以及一些安全提醒等。</p>
+<p>Please read the Terms of Service at<br><a href="https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf">https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf</a>. You must<br>agree in order to register with the ACME server at<br><a href="https://acme-v02.api.letsencrypt.org/directory">https://acme-v02.api.letsencrypt.org/directory</a></p>
+<hr>
+<p>(A)gree/(C)ancel: A</p>
+<p>同意<code>letsencrypt</code>这个组织的服务条款。</p>
+<hr>
+<p>Would you be willing to share your email address with the Electronic Frontier<br>Foundation, a founding partner of the Let’s Encrypt project and the non-profit<br>organization that develops Certbot? We’d like to send you email about our work<br>encrypting the web, EFF news, campaigns, and ways to support digital freedom.</p>
+<hr>
+<p>(Y)es/(N)o: Y<br>Please enter in your domain name(s) (comma and/or space separated)  (Enter ‘c’<br>to cancel):</p>
+<p>提示输入要开启<code>https</code>的域名，多个域名用逗号或者空格分开。</p>
+<blockquote>
+<p>证书生成完毕之后会在<code>/home/www/mycertificate/letsencrypt</code>目录下有相应的文件，值得注意的是，多个域名共用一个证书文件。所以如果你在上一步配置了多个域名，这里也只能看到一个证书文件。</p>
+</blockquote>
+<p><em>nginx 配置<code>https</code>证书</em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">  listen 443 ssl default_server;</span><br><span class="line">  server_name bitsum.pro *.bitsum.pro;</span><br><span class="line"><span class="meta">  #</span><span class="bash">PEM格式的证书文件</span></span><br><span class="line">  ssl_certificate     /home/www/mycertificate/letsencrypt/live/dev.bitsum.pro/fullchain.pem;</span><br><span class="line"><span class="meta">  #</span><span class="bash">证书文件的密钥</span></span><br><span class="line">  ssl_certificate_key /home/www/mycertificate/letsencrypt/live/dev.bitsum.pro/privkey.pem;</span><br><span class="line"><span class="meta">  #</span><span class="bash">指定https的协议版本</span></span><br><span class="line">  ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line"><span class="meta">  #</span><span class="bash"> 启用指定的OpenSSL ciphers</span></span><br><span class="line">  ssl_ciphers         HIGH:!aNULL:!MD5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动<code>nginx</code>服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo nginx -c /home/www/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<p><strong>完整配置文件</strong></p>
+<p><em>nginx.conf:</em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">user  nginx nginx;</span><br><span class="line">worker_processes  2;</span><br><span class="line"></span><br><span class="line">pid        /home/www/nginx/nginx.pid;</span><br><span class="line">error_log  /home/www/nginx/log/error.log warn;</span><br><span class="line"></span><br><span class="line">worker_rlimit_nofile    2048;</span><br><span class="line">events &#123;</span><br><span class="line">  worker_connections  1024;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> http &#123;</span><br><span class="line">    include       /etc/nginx/mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">                      '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">                      '"$http_user_agent" "$http_x_forwarded_for"';</span><br><span class="line"></span><br><span class="line">    access_log  /home/www/nginx/log/access.log  main;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    tcp_nopush     on;</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65s;</span><br><span class="line"></span><br><span class="line">    autoindex  on;</span><br><span class="line"> </span><br><span class="line">    proxy_cache_path    /home/www/nginx/cache   levels=1:2  keys_zone=backcache:8m max_size=50m use_temp_path=off;</span><br><span class="line">    proxy_cache_key     "$scheme$request_method$host$request_uri$is_args$args";</span><br><span class="line">    proxy_cache_valid   302 10m;</span><br><span class="line">    proxy_cache_valid   404 1m;</span><br><span class="line"> </span><br><span class="line">    include /home/www/nginx/conf.d/*.conf;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<p><em>config.d/bitsum.pro.conf:</em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    server_name bitsum.pro;</span><br><span class="line">    return 301 https://bitsum.pro$request_uri;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">upstream backend_hosts &#123;</span><br><span class="line">    server  47.75.216.4;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">server &#123;</span><br><span class="line">  listen 443 ssl default_server;</span><br><span class="line">  server_name bitsum.pro *.bitsum.pro;</span><br><span class="line">  ssl_certificate     /home/www/mycertificate/letsencrypt/live/dev.bitsum.pro/fullchain.pem;</span><br><span class="line">  ssl_certificate_key /home/www/mycertificate/letsencrypt/live/dev.bitsum.pro/privkey.pem;</span><br><span class="line">  ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;</span><br><span class="line">  ssl_ciphers         HIGH:!aNULL:!MD5;</span><br><span class="line"></span><br><span class="line">  proxy_buffering on;</span><br><span class="line">  proxy_buffer_size 2k;</span><br><span class="line">  proxy_buffers   32 8k;</span><br><span class="line">  proxy_busy_buffers_size 16k;</span><br><span class="line">  proxy_max_temp_file_size 2048m;</span><br><span class="line">  proxy_temp_file_write_size 32k;</span><br><span class="line"></span><br><span class="line">  location ~ ^/(admin|download|miner-client|mobile|static|website)/ &#123;</span><br><span class="line">    proxy_cache backcache;</span><br><span class="line">    proxy_cache_bypass  $http_cache_control;</span><br><span class="line">    add_header X-Proxy-Cache $upstream_cache_status;</span><br><span class="line"></span><br><span class="line">    proxy_pass  http://backend_hosts;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  location / &#123;</span><br><span class="line">    proxy_pass  http://backend_hosts;</span><br><span class="line"></span><br><span class="line">    proxy_set_header    HOST $host;</span><br><span class="line">    proxy_set_header    X-Forwarded-Proto $scheme;</span><br><span class="line">    proxy_set_header    X-Real-IP $remote_addr;</span><br><span class="line">    proxy_set_header    X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">设置启用gzip的http版本信息</span></span><br><span class="line">  gzip_http_version   1.0;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">设置gzip压缩等级</span></span><br><span class="line">  gzip_comp_level   5;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">设置当Content-Length大于256的时候启用gzip配置</span></span><br><span class="line">  gzip_min_length   256;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">对所有的代理请求都启用gzip</span></span><br><span class="line">  gzip_proxied  any;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">添加“Vary: Accept-Encoding”到请求头部告知代理服务器是否支持gzip压缩</span></span><br><span class="line">  gzip_vary   on;</span><br><span class="line"></span><br><span class="line"><span class="meta">  #</span><span class="bash">设置需要压缩的MIME types</span></span><br><span class="line">  gzip_types</span><br><span class="line">    application/atom+xml</span><br><span class="line">    application/javascript</span><br><span class="line">    application/json</span><br><span class="line">    application/rss+xml</span><br><span class="line">    application/vnd.ms-fontobject</span><br><span class="line">    application/x-font-ttf</span><br><span class="line">    application/x-web-app-manifest+json</span><br><span class="line">    application/xhtml+xml</span><br><span class="line">    application/xml</span><br><span class="line">    font/opentype</span><br><span class="line">    image/svg+xml</span><br><span class="line">    image/x-icon</span><br><span class="line">    text/css</span><br><span class="line">    text/plain</span><br><span class="line">    text/x-component;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p><a href="https://medium.com/@pierangelo1982/docker-nginx-and-letsencrypt-432397db4a0c">Docker NGINX and letsencrypt</a><br><a href="https://letsencrypt.org/getting-started/">letsencrypt</a><br><a href="https://certbot.eff.org">certbot</a><br><a href="https://www.digitalocean.com/community/tutorials/understanding-nginx-http-proxying-load-balancing-buffering-and-caching#configuring-proxy-caching-to-decrease-response-times">understanding-nginx-http-proxying</a><br><a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">ngx_http_proxy_module</a><br><a href="https://nginx.org/en/docs/http/ngx_core_module.html">ngx_core_module</a><br><a href="https://nginx.org/en/docs/http/ngx_http_ssl_module.html">ngx_http_ssl_module</a><br><a href="https://www.nginx.com/blog/nginx-caching-guide/">nginx-caching-guide</a>  </p>
+
+        </div>
+        
+        <div class="level is-size-7 is-uppercase">
+            <div class="level-start">
+                <div class="level-item">
+                    <span class="is-size-6 has-text-grey has-mr-7">#</span>
+                    <a class="has-link-grey -link" href="/tags/nginx/" rel="tag">nginx</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2018/12/26/Golang%E5%87%A0%E7%A7%8D%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5%E7%9A%84%E5%AE%9E%E7%8E%B0/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">Golang几种依赖注入的实现</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2018/11/08/%E6%95%B0%E5%AD%97%E8%B4%A7%E5%B8%81-%E4%BB%80%E4%B9%88%E5%80%BC%E5%BE%97%E6%8C%96/">
+                <span class="level-item">数字货币-什么值得挖?</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered" style="flex-shrink: 1">
+                <div>
+                    
+                    <figure class="image is-128x128 has-mb-6">
+                        <img class="is-rounded" src="/images/logo.png" alt="chen.lin">
+                    </figure>
+                    
+                    <p class="is-size-4 is-block">
+                        chen.lin
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        keep forward.
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>上海-中国</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <a href="/archives">
+                        <p class="title has-text-weight-normal">
+                            90
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <a href="/categories">
+                        <p class="title has-text-weight-normal">
+                            19
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <a href="/tags">
+                        <p class="title has-text-weight-normal">
+                            62
+                        </p>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/luncher" target="_blank" rel="noopener">
+                关注我</a>
+        </div>
+        
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
+                title="Github" href="https://github.com/luncher">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
+                title="Twitter" href="https://twitter.com/gakiclin1">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
+                title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Vue%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/">
+            <span class="level-start">
+                <span class="level-item">Vue源码分析系列文章</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/javascript/">
+            <span class="level-start">
+                <span class="level-item">javascript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">3</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/lerning/">
+            <span class="level-start">
+                <span class="level-item">lerning</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/mobx/">
+            <span class="level-start">
+                <span class="level-item">mobx</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/mobx/statemanager/">
+            <span class="level-start">
+                <span class="level-item">statemanager</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/react/">
+            <span class="level-start">
+                <span class="level-item">react</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/server/">
+            <span class="level-start">
+                <span class="level-item">server</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">25</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/server/nodejs/">
+            <span class="level-start">
+                <span class="level-item">nodejs</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/typescript/">
+            <span class="level-start">
+                <span class="level-item">typescript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/vscode/">
+            <span class="level-start">
+                <span class="level-item">vscode</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">3</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/web/">
+            <span class="level-start">
+                <span class="level-item">web</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">45</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/web/mobx/">
+            <span class="level-start">
+                <span class="level-item">mobx</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/web/typescript/">
+            <span class="level-start">
+                <span class="level-item">typescript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">
+            <span class="level-start">
+                <span class="level-item">数据库</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/">
+            <span class="level-start">
+                <span class="level-item">系统监控</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">
+            <span class="level-start">
+                <span class="level-item">编程语言</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+            <span class="level-start">
+                <span class="level-item">设计模式</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">
+            <span class="level-start">
+                <span class="level-item">软件开发</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/AMD/" style="font-size: 10px;">AMD</a> <a href="/tags/BlockChain/" style="font-size: 10px;">BlockChain</a> <a href="/tags/CMD/" style="font-size: 10px;">CMD</a> <a href="/tags/Quill/" style="font-size: 10px;">Quill</a> <a href="/tags/SVG/" style="font-size: 10px;">SVG</a> <a href="/tags/animation/" style="font-size: 10px;">animation</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/api/" style="font-size: 10px;">api</a> <a href="/tags/babel/" style="font-size: 10px;">babel</a> <a href="/tags/benchmark/" style="font-size: 10px;">benchmark</a> <a href="/tags/c/" style="font-size: 10px;">c</a> <a href="/tags/c/" style="font-size: 10px;">c++</a> <a href="/tags/cache/" style="font-size: 10px;">cache</a> <a href="/tags/cheatsheet/" style="font-size: 16px;">cheatsheet</a> <a href="/tags/codepush/" style="font-size: 10px;">codepush</a> <a href="/tags/commonjs/" style="font-size: 10px;">commonjs</a> <a href="/tags/computed/" style="font-size: 10px;">computed</a> <a href="/tags/context/" style="font-size: 12px;">context</a> <a href="/tags/crypto/" style="font-size: 10px;">crypto</a> <a href="/tags/css/" style="font-size: 20px;">css</a> <a href="/tags/database/" style="font-size: 12px;">database</a> <a href="/tags/debounce/" style="font-size: 10px;">debounce</a> <a href="/tags/es6/" style="font-size: 14px;">es6</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/h5/" style="font-size: 10px;">h5</a> <a href="/tags/hooks/" style="font-size: 12px;">hooks</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/http/" style="font-size: 12px;">http</a> <a href="/tags/inline-block/" style="font-size: 10px;">inline block</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/less/" style="font-size: 10px;">less</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/mixed-content/" style="font-size: 10px;">mixed-content</a> <a href="/tags/mobx/" style="font-size: 16px;">mobx</a> <a href="/tags/monitor/" style="font-size: 10px;">monitor</a> <a href="/tags/nginx/" style="font-size: 12px;">nginx</a> <a href="/tags/password/" style="font-size: 10px;">password</a> <a href="/tags/position/" style="font-size: 10px;">position</a> <a href="/tags/propertys/" style="font-size: 10px;">propertys</a> <a href="/tags/proxy/" style="font-size: 10px;">proxy</a> <a href="/tags/react/" style="font-size: 18px;">react</a> <a href="/tags/rest/" style="font-size: 10px;">rest</a> <a href="/tags/sailsjs/" style="font-size: 14px;">sailsjs</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/ssr/" style="font-size: 10px;">ssr</a> <a href="/tags/strict-mode/" style="font-size: 10px;">strict-mode</a> <a href="/tags/table/" style="font-size: 10px;">table</a> <a href="/tags/throttle/" style="font-size: 10px;">throttle</a> <a href="/tags/transition/" style="font-size: 10px;">transition</a> <a href="/tags/tsconfig/" style="font-size: 10px;">tsconfig</a> <a href="/tags/typescript/" style="font-size: 14px;">typescript</a> <a href="/tags/vue/" style="font-size: 10px;">vue</a> <a href="/tags/vuejs/" style="font-size: 10px;">vuejs</a> <a href="/tags/webpack/" style="font-size: 14px;">webpack</a> <a href="/tags/weex/" style="font-size: 10px;">weex</a> <a href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/" style="font-size: 10px;">发布订阅</a> <a href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/" style="font-size: 10px;">富文本编辑器</a> <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">编程语言</a> <a href="/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">观察者模式</a> <a href="/tags/%E9%87%8D%E6%9E%84/" style="font-size: 10px;">重构</a>
+    </div>
+</div>
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-31T05:37:19.000Z">2020-08-31</time></div>
+                    <a href="/2020/08/31/Duck-Type-vs-Structural-Type-vs-Nominal-Type/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Duck Type vs Structural Type vs Nominal Type</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-23T06:21:20.000Z">2020-08-23</time></div>
+                    <a href="/2020/08/23/Typescript-%E5%85%B8%E5%9E%8B%E7%9A%84%E7%B1%BB%E5%9E%8B%E9%97%AE%E9%A2%98/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Typescript 典型的类型问题</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/typescript/">typescript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-16T04:32:39.000Z">2020-08-16</time></div>
+                    <a href="/2020/08/16/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F-vs-%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85/" class="title has-link-black-ter is-size-6 has-text-weight-normal">观察者模式 vs 发布/订阅</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-10T18:31:52.000Z">2020-08-11</time></div>
+                    <a href="/2020/08/11/React-%E5%92%8C-Vue-%E7%9A%84-Location-%E5%90%8C%E6%AD%A5/" class="title has-link-black-ter is-size-6 has-text-weight-normal">React 和 Vue 的 Location 同步</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/web/">web</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-07-29T15:45:08.000Z">2020-07-29</time></div>
+                    <a href="/2020/07/29/%E4%BB%8E-typescript-%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0-React-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从 typescript 的角度学习 React 的基本概念</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/web/">web</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">9</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2014/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2014</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/AMD/">
+                        <span class="tag">AMD</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/BlockChain/">
+                        <span class="tag">BlockChain</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/CMD/">
+                        <span class="tag">CMD</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Quill/">
+                        <span class="tag">Quill</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/SVG/">
+                        <span class="tag">SVG</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/animation/">
+                        <span class="tag">animation</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/antd/">
+                        <span class="tag">antd</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/api/">
+                        <span class="tag">api</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/babel/">
+                        <span class="tag">babel</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/benchmark/">
+                        <span class="tag">benchmark</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/c/">
+                        <span class="tag">c</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/c/">
+                        <span class="tag">c++</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/cache/">
+                        <span class="tag">cache</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/cheatsheet/">
+                        <span class="tag">cheatsheet</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/codepush/">
+                        <span class="tag">codepush</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/commonjs/">
+                        <span class="tag">commonjs</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/computed/">
+                        <span class="tag">computed</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/context/">
+                        <span class="tag">context</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/crypto/">
+                        <span class="tag">crypto</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/css/">
+                        <span class="tag">css</span>
+                        <span class="tag is-grey">11</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/database/">
+                        <span class="tag">database</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/debounce/">
+                        <span class="tag">debounce</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/es6/">
+                        <span class="tag">es6</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/golang/">
+                        <span class="tag">golang</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/h5/">
+                        <span class="tag">h5</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/hooks/">
+                        <span class="tag">hooks</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/html/">
+                        <span class="tag">html</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/http/">
+                        <span class="tag">http</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/inline-block/">
+                        <span class="tag">inline block</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/javascript/">
+                        <span class="tag">javascript</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/layout/">
+                        <span class="tag">layout</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/less/">
+                        <span class="tag">less</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linux/">
+                        <span class="tag">linux</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/log/">
+                        <span class="tag">log</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mixed-content/">
+                        <span class="tag">mixed-content</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mobx/">
+                        <span class="tag">mobx</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/monitor/">
+                        <span class="tag">monitor</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/nginx/">
+                        <span class="tag">nginx</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/password/">
+                        <span class="tag">password</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/position/">
+                        <span class="tag">position</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/propertys/">
+                        <span class="tag">propertys</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/proxy/">
+                        <span class="tag">proxy</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/react/">
+                        <span class="tag">react</span>
+                        <span class="tag is-grey">10</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/rest/">
+                        <span class="tag">rest</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/sailsjs/">
+                        <span class="tag">sailsjs</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ssh/">
+                        <span class="tag">ssh</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ssr/">
+                        <span class="tag">ssr</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/strict-mode/">
+                        <span class="tag">strict-mode</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/table/">
+                        <span class="tag">table</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/throttle/">
+                        <span class="tag">throttle</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/transition/">
+                        <span class="tag">transition</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/tsconfig/">
+                        <span class="tag">tsconfig</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/typescript/">
+                        <span class="tag">typescript</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/vue/">
+                        <span class="tag">vue</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/vuejs/">
+                        <span class="tag">vuejs</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/webpack/">
+                        <span class="tag">webpack</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/weex/">
+                        <span class="tag">weex</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+                        <span class="tag">发布订阅</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/">
+                        <span class="tag">富文本编辑器</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">
+                        <span class="tag">编程语言</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">
+                        <span class="tag">观察者模式</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E9%87%8D%E6%9E%84/">
+                        <span class="tag">重构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-31T05:37:19.000Z">2020-08-31</time></div>
+                    <a href="/2020/08/31/Duck-Type-vs-Structural-Type-vs-Nominal-Type/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Duck Type vs Structural Type vs Nominal Type</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-23T06:21:20.000Z">2020-08-23</time></div>
+                    <a href="/2020/08/23/Typescript-%E5%85%B8%E5%9E%8B%E7%9A%84%E7%B1%BB%E5%9E%8B%E9%97%AE%E9%A2%98/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Typescript 典型的类型问题</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/typescript/">typescript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-16T04:32:39.000Z">2020-08-16</time></div>
+                    <a href="/2020/08/16/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F-vs-%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85/" class="title has-link-black-ter is-size-6 has-text-weight-normal">观察者模式 vs 发布/订阅</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-10T18:31:52.000Z">2020-08-11</time></div>
+                    <a href="/2020/08/11/React-%E5%92%8C-Vue-%E7%9A%84-Location-%E5%90%8C%E6%AD%A5/" class="title has-link-black-ter is-size-6 has-text-weight-normal">React 和 Vue 的 Location 同步</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/web/">web</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-07-29T15:45:08.000Z">2020-07-29</time></div>
+                    <a href="/2020/07/29/%E4%BB%8E-typescript-%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0-React-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从 typescript 的角度学习 React 的基本概念</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/web/">web</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">9</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2014/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2014</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/AMD/">
+                        <span class="tag">AMD</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/BlockChain/">
+                        <span class="tag">BlockChain</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/CMD/">
+                        <span class="tag">CMD</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Quill/">
+                        <span class="tag">Quill</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/SVG/">
+                        <span class="tag">SVG</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/animation/">
+                        <span class="tag">animation</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/antd/">
+                        <span class="tag">antd</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/api/">
+                        <span class="tag">api</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/babel/">
+                        <span class="tag">babel</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/benchmark/">
+                        <span class="tag">benchmark</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/c/">
+                        <span class="tag">c</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/c/">
+                        <span class="tag">c++</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/cache/">
+                        <span class="tag">cache</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/cheatsheet/">
+                        <span class="tag">cheatsheet</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/codepush/">
+                        <span class="tag">codepush</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/commonjs/">
+                        <span class="tag">commonjs</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/computed/">
+                        <span class="tag">computed</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/context/">
+                        <span class="tag">context</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/crypto/">
+                        <span class="tag">crypto</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/css/">
+                        <span class="tag">css</span>
+                        <span class="tag is-grey">11</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/database/">
+                        <span class="tag">database</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/debounce/">
+                        <span class="tag">debounce</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/es6/">
+                        <span class="tag">es6</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/golang/">
+                        <span class="tag">golang</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/h5/">
+                        <span class="tag">h5</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/hooks/">
+                        <span class="tag">hooks</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/html/">
+                        <span class="tag">html</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/http/">
+                        <span class="tag">http</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/inline-block/">
+                        <span class="tag">inline block</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/javascript/">
+                        <span class="tag">javascript</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/layout/">
+                        <span class="tag">layout</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/less/">
+                        <span class="tag">less</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linux/">
+                        <span class="tag">linux</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/log/">
+                        <span class="tag">log</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mixed-content/">
+                        <span class="tag">mixed-content</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mobx/">
+                        <span class="tag">mobx</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/monitor/">
+                        <span class="tag">monitor</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/nginx/">
+                        <span class="tag">nginx</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/password/">
+                        <span class="tag">password</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/position/">
+                        <span class="tag">position</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/propertys/">
+                        <span class="tag">propertys</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/proxy/">
+                        <span class="tag">proxy</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/react/">
+                        <span class="tag">react</span>
+                        <span class="tag is-grey">10</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/rest/">
+                        <span class="tag">rest</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/sailsjs/">
+                        <span class="tag">sailsjs</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ssh/">
+                        <span class="tag">ssh</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ssr/">
+                        <span class="tag">ssr</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/strict-mode/">
+                        <span class="tag">strict-mode</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/table/">
+                        <span class="tag">table</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/throttle/">
+                        <span class="tag">throttle</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/transition/">
+                        <span class="tag">transition</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/tsconfig/">
+                        <span class="tag">tsconfig</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/typescript/">
+                        <span class="tag">typescript</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/vue/">
+                        <span class="tag">vue</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/vuejs/">
+                        <span class="tag">vuejs</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/webpack/">
+                        <span class="tag">webpack</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/weex/">
+                        <span class="tag">weex</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+                        <span class="tag">发布订阅</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/">
+                        <span class="tag">富文本编辑器</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">
+                        <span class="tag">编程语言</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">
+                        <span class="tag">观察者模式</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E9%87%8D%E6%9E%84/">
+                        <span class="tag">重构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/favicon.ico" alt="nginx服务器完整配置" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2020 clin&nbsp;
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+<script>
+var IcarusThemeSettings = {
+    site: {
+        url: 'https://luncher.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
+    article: {
+        highlight: {
+            clipboard: true,
+            fold: 'unfolded'
+        }
+    }
+};
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+
+
+
+
+
+<script src="/js/animation.js"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+<script src="/js/gallery.js" defer></script>
+
+
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>

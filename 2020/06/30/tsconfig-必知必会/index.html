@@ -1,0 +1,3076 @@
+<!DOCTYPE html>
+<html  lang="zh">
+<head>
+    <meta charset="utf-8" />
+
+<meta name="generator" content="Hexo 4.2.0" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+<title>tsconfig 必知必会 - I am lin chen</title>
+
+
+    <meta name="description" content="背景tsconfig.json 是 ts 项目的配置文件，用于项目的编译。归纳总结，主要包含了几块内容：  项目的安装和初始化 编译输入文件 编译输出配置 基本编译选项 对 js 的支持 类型检查和 lint 配置 模块解析配置 其他配置  本文尝试分析日常开发过程中必须熟悉的 tsconfig 相关配置知识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="tsconfig 必知必会">
+<meta property="og:url" content="https://luncher.github.io/2020/06/30/tsconfig-%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/index.html">
+<meta property="og:site_name" content="I am lin chen">
+<meta property="og:description" content="背景tsconfig.json 是 ts 项目的配置文件，用于项目的编译。归纳总结，主要包含了几块内容：  项目的安装和初始化 编译输入文件 编译输出配置 基本编译选项 对 js 的支持 类型检查和 lint 配置 模块解析配置 其他配置  本文尝试分析日常开发过程中必须熟悉的 tsconfig 相关配置知识。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://luncher.github.io/images/og_image.png">
+<meta property="article:published_time" content="2020-06-30T14:49:55.000Z">
+<meta property="article:modified_time" content="2020-08-30T16:43:10.012Z">
+<meta property="article:author" content="clin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://luncher.github.io/images/og_image.png">
+
+
+
+
+
+
+
+<link rel="icon" href="/images/favicon.ico">
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.7.2/css/bulma.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:400,600|Source+Code+Pro">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css">
+
+
+    
+    
+<style>body>.footer,body>.navbar,body>.section{opacity:0}</style>
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css">
+
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.css">
+
+    
+    
+    
+    
+<link rel="stylesheet" href="/css/back-to-top.css">
+
+    
+    
+    
+    
+    
+    
+    
+    <link rel="stylesheet" href="/css/progressbar.css">
+<script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script>
+    
+    
+    
+
+
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="is-3-column">
+    <nav class="navbar navbar-main">
+    <div class="container">
+        <div class="navbar-brand is-flex-center">
+            <a class="navbar-item navbar-logo" href="/">
+            
+                <img src="/images/favicon.ico" alt="tsconfig 必知必会" height="28">
+            
+            </a>
+        </div>
+        <div class="navbar-menu">
+            
+            <div class="navbar-start">
+                
+                <a class="navbar-item"
+                href="/">主页</a>
+                
+                <a class="navbar-item"
+                href="/archives">归档</a>
+                
+                <a class="navbar-item"
+                href="/categories">分类</a>
+                
+                <a class="navbar-item"
+                href="/tags">标签</a>
+                
+                <a class="navbar-item"
+                href="/about">关于</a>
+                
+            </div>
+            
+            <div class="navbar-end">
+                
+                    
+                    <a class="navbar-item" target="_blank" rel="noopener" title="GitHub" href="https://github.com/luncher">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                    
+                
+                
+                
+                <a class="navbar-item search" title="搜索" href="javascript:;">
+                    <i class="fas fa-search"></i>
+                </a>
+                
+            </div>
+        </div>
+    </div>
+</nav>
+    
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-8-tablet is-8-desktop is-6-widescreen has-order-2 column-main">
+<div class="card">
+    
+    <div class="card-content article ">
+        
+        <div class="level article-meta is-size-7 is-uppercase is-mobile is-overflow-x-auto">
+            <div class="level-left">
+                <time class="level-item has-text-grey" datetime="2020-06-30T14:49:55.000Z">2020-06-30</time>
+                
+                <div class="level-item">
+                <a class="has-link-grey -link" href="/categories/typescript/">typescript</a>
+                </div>
+                
+                
+                <span class="level-item has-text-grey">
+                    
+                    
+                    27 分钟 读完 (大约 4080 个字)
+                </span>
+                
+                
+            </div>
+        </div>
+        
+        <h1 class="title is-size-3 is-size-4-mobile has-text-weight-normal">
+            
+                tsconfig 必知必会
+            
+        </h1>
+        <div class="content">
+            <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p><code>tsconfig.json</code> 是 <code>ts</code> 项目的配置文件，用于项目的编译。归纳总结，主要包含了几块内容：</p>
+<ul>
+<li>项目的安装和初始化</li>
+<li>编译输入文件</li>
+<li>编译输出配置</li>
+<li>基本编译选项</li>
+<li>对 <code>js</code> 的支持</li>
+<li>类型检查和 <code>lint</code> 配置</li>
+<li>模块解析配置</li>
+<li>其他配置</li>
+</ul>
+<p>本文尝试分析日常开发过程中必须熟悉的 <code>tsconfig</code> 相关配置知识。</p>
+<a id="more"></a>
+<hr>
+<h3 id="安装编译工具"><a href="#安装编译工具" class="headerlink" title="安装编译工具"></a>安装编译工具</h3><p><code>tsc</code> 作为 <code>ts</code> 项目文件的编译器，需要先安装好。</p>
+<blockquote>
+<p>npm i -g typescript</p>
+</blockquote>
+<p>如果希望安装到现有的某个项目下，可以使用：</p>
+<blockquote>
+<p>npm install typescript –save-dev</p>
+</blockquote>
+<p>安装完毕之后会有一个 <code>tsc</code> 的命令。</p>
+<hr>
+<h3 id="初始化配置"><a href="#初始化配置" class="headerlink" title="初始化配置"></a>初始化配置</h3><p><code>tsc</code> 有个 <code>init</code> 的指令，执行命令：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc --init</span><br></pre></td></tr></table></figure></p>
+<p>在当前目录下生成一个 <code>tsconfig.json</code>, 如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="comment">/* Basic Options */</span></span><br><span class="line">    <span class="attr">"target"</span>: <span class="string">"es5"</span>,                          <span class="comment">/* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */</span></span><br><span class="line">    <span class="attr">"module"</span>: <span class="string">"commonjs"</span>,                     <span class="comment">/* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */</span></span><br><span class="line">    <span class="attr">"strict"</span>: <span class="literal">true</span>,                           <span class="comment">/* Enable all strict type-checking options. */</span></span><br><span class="line">    <span class="attr">"esModuleInterop"</span>: <span class="literal">true</span>,                  <span class="comment">/* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */</span></span><br><span class="line">    <span class="attr">"forceConsistentCasingInFileNames"</span>: <span class="literal">true</span>  <span class="comment">/* Disallow inconsistently-cased references to the same file. */</span></span><br><span class="line">    <span class="comment">//... 其他配置</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>默认生成的配置文件只包含了编译相关的配置， 因为对于输入文件和输出都有默认的行为。</p>
+<hr>
+<h3 id="输入文件"><a href="#输入文件" class="headerlink" title="输入文件"></a>输入文件</h3><blockquote>
+<p><code>tsconfig</code> 默认如果不配置输入文件，则会加载当前项目下所有的以：<code>.ts</code>、<code>.tsx</code> 、<code>.d.ts</code> 结尾的文件。如果配置了 <code>allowJs</code> 还会加载 <code>.js</code>、<code>.jsx</code> 文件。</p>
+</blockquote>
+<p><code>tsconfig</code> 内跟输入文件有关的主要包含三个配置：<code>files</code>、<code>include</code>、<code>exclude</code>。<code>files</code> 和 <code>include</code> 用于指定输入文件，<code>exclude</code> 用于指定需要排除的输入文件。需要注意的是，如果 <code>exclude</code> 内指定的文件，在实际的编译过程中还是被引用 (<code>import</code>) 了，那么该文件还是会参与编译。</p>
+<p><code>files</code> 和 <code>include</code> 作用并不重复，其主要区别在于：</p>
+<ul>
+<li><code>includes</code> 能使用 <code>glob</code> 通配符，而 <code>files</code> 只能包含<strong>某个文件</strong>的相对路径</li>
+<li><code>files</code> 指定的文件不能被 <code>exclude</code> 排除，而 <code>include</code> 则可以</li>
+</ul>
+<p>来看一个 <code>Demo</code>：</p>
+<p>当前目录结构如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── package.json</span><br><span class="line">├── src</span><br><span class="line">│   ├── dir</span><br><span class="line">│   │   ├── foo.js</span><br><span class="line">│   │   └── foo.ts</span><br><span class="line">│   ├── dir2</span><br><span class="line">│   │   └── bar.ts</span><br><span class="line">│   └── index.ts</span><br><span class="line">└── tsconfig.json</span><br></pre></td></tr></table></figure>
+<p><code>tsconfig.json</code> 配置：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"include"</span>: [</span><br><span class="line">    <span class="string">"src/**/*.*"</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">"exclude"</span>: [</span><br><span class="line">    <span class="string">"src/dir/*.*"</span></span><br><span class="line">  ],</span><br><span class="line">  <span class="comment">//... 其他配置</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译文件：</p>
+<blockquote>
+<p>tsc –outDir ./dist</p>
+</blockquote>
+<p>生成文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">➜  dist tree .</span><br><span class="line">.</span><br><span class="line">├── dir2</span><br><span class="line">│   └── bar.js</span><br><span class="line">└── index.js</span><br></pre></td></tr></table></figure>
+<p><strong>因为 dir 内的文件被排除了，所以没有参与编译</strong></p>
+<p>修改配置，强制包含 <code>dir</code> 内的文件：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"files"</span>: [<span class="string">"src/dir/foo.ts"</span>],</span><br><span class="line">  <span class="comment">//...其他配置</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>生成结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">➜  dist tree .</span><br><span class="line">.</span><br><span class="line">├── dir</span><br><span class="line">│   └── foo.js</span><br><span class="line">├── dir2</span><br><span class="line">│   └── bar.js</span><br><span class="line">└── index.js</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<blockquote>
+<p>1、虽然 <code>tsc</code> 有文件后缀的加载规则，但是可以通过 <code>include pattern</code> 只包含指定后缀的文件<br>2、虽然 <code>tsc</code> 会编译 <code>tsx</code> 后缀的文件（通过 <code>allowJs</code>还会加载 <code>jsx</code>）。但是如果想在文件中使用 <code>jsx</code> 语法，那么还必须开启 <code>jsx</code> 配置项（见下文）。</p>
+</blockquote>
+<hr>
+<h3 id="输出文件"><a href="#输出文件" class="headerlink" title="输出文件"></a>输出文件</h3><p>输出的文件配置主要包含两个选项：<code>outFile</code>、<code>outDir</code>。</p>
+<p><code>outFile</code> 用于指定输出的文件，该指令会把输入文件合并成单个文件，文件顺序取决余代码加载的顺序。<code>outDir</code> 不会合并文件，会把文件按照原位置输出。需要注意的是 <code>outFile</code> 对于 <code>module</code> 有要求，当开启 <code>outFile</code> 的时候，<code>module</code> 指定的模块规范必须支持单文件的模式。只有 “AMD” 和 “System”能和 <code>outFile</code> 一起使用。</p>
+<p>看个 <code>demo</code>:</p>
+<p><code>tsconfig</code>: </p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">  <span class="attr">"module"</span>: <span class="string">"amd"</span>,</span><br><span class="line">  <span class="attr">"outFile"</span>: <span class="string">"./aa.js"</span></span><br><span class="line">&#125;,</span><br><span class="line"><span class="comment">//...其他配置</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译输出：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">"use strict"</span>;</span><br><span class="line">define(<span class="string">"dir/foo"</span>, [<span class="string">"require"</span>, <span class="string">"exports"</span>], <span class="function"><span class="keyword">function</span> (<span class="params">require, exports</span>) </span>&#123;</span><br><span class="line"><span class="meta">    "use strict"</span>;</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(exports, <span class="string">"__esModule"</span>, &#123; <span class="attr">value</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">    exports.foo = <span class="number">123</span>;</span><br><span class="line">&#125;);</span><br><span class="line">define(<span class="string">"dir2/bar"</span>, [<span class="string">"require"</span>, <span class="string">"exports"</span>], <span class="function"><span class="keyword">function</span> (<span class="params">require, exports</span>) </span>&#123;</span><br><span class="line"><span class="meta">    "use strict"</span>;</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(exports, <span class="string">"__esModule"</span>, &#123; <span class="attr">value</span>: <span class="literal">true</span> &#125;);</span><br><span class="line">    exports.bar = <span class="number">456</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>可以看到多个源文件被合并成单个文件输出。</p>
+<hr>
+<h3 id="基本编译配置"><a href="#基本编译配置" class="headerlink" title="基本编译配置"></a>基本编译配置</h3><ul>
+<li>incremental</li>
+</ul>
+<p><code>incremental</code> 表示增量的意思，作用在于减少编译的时间，每次编译会保存编译信息，下次编译的时候加载本次编译信息，只做增量的编译，从而减少编译时间。还有一个配置项叫：<code>tsBuildInfoFile</code> 用于指定保存编译信息的文件路径。</p>
+<ul>
+<li>target</li>
+</ul>
+<p>指定编译输出文件的 <code>ECMAScript</code> 版本信息，可能的值有：<code>ES3</code>、<code>ES5</code> 、<code>ESNEXT</code> 等。</p>
+<blockquote>
+<p><code>ESNEXT</code> 是一个动态的概念，表示截止目前为止最新的标准 <code>ECMAScript</code> 特性，外加进入 <code>stag-3</code> 及以上阶段的特性。</p>
+</blockquote>
+<ul>
+<li>module</li>
+</ul>
+<p><code>module</code> 指定输出代码的模块格式，支持的模块有：</p>
+<p>1 commonjs<br>2 es module<br>3 amd<br>4 umd<br>5 systemjs<br>6 none</p>
+<p>关于模块的详细说明，参考 <a href="https://www.typescriptlang.org/docs/handbook/modules.html">modules</a>。</p>
+<ul>
+<li>lib</li>
+</ul>
+<p><code>lib</code> 给 <code>ts</code> 编译的时候提供默认的类型信息，主要指的是内置的语言 <code>API</code>信息。如果 <code>lib</code> 选项没有配置，默认的行为：</p>
+<ol>
+<li>当 <code>target</code> 等于 <code>es5</code> 的时候，<code>lib</code> 等于 [DOM,ES5,ScriptHost]</li>
+<li>当 <code>target</code> 等于 <code>es6</code> 的时候，<code>lib</code> 等于<br>[DOM,ES6,DOM.Iterable,ScriptHost]</li>
+</ol>
+<p>当我们的项目中需要使用某些语言特性，但是不在默认的 <code>lib</code> 列表内，那么就需要手动指定。需要注意的是 <code>tsc</code> 不会帮我们做 <code>polyfill</code> 的事情，这是<a href="https://github.com/Microsoft/TypeScript/wiki/TypeScript-Design-Goals#non-goals">有意为之</a>。即：指定 <code>lib</code> 只能绕过类型检查，但是 <code>polyfill</code> 的事情需要开发者自己完成。</p>
+<blockquote>
+<p>Provide additional runtime functionality or libraries. Instead, use TypeScript to describe existing libraries</p>
+</blockquote>
+<p>简而言之，<code>tsc</code> 提供了某种 <code>syntax transform</code>(语法转换)的能力，如转译箭头函数的功能，但是不做 <code>polyfill</code> 的事情。这个需要开发者自行完成。</p>
+<p>看个 <code>demo</code>:</p>
+<p><code>index.ts</code><br><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 类型“(number | number[])[]”上不存在属性“flat”</span></span><br><span class="line"><span class="keyword">const</span> arr = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>, [<span class="number">4</span>]].flat()</span><br></pre></td></tr></table></figure></p>
+<p>把 <code>ES2019</code> 加上：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"lib"</span>: [<span class="string">"DOM"</span>, <span class="string">"ES2015"</span>, <span class="string">"ES2019"</span>],</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>警告就消失了。</p>
+<p>关于 <code>polyfill</code> 和 <code>transplier</code> 的差异请参考：<a href="https://luncher.github.io/2020/03/22/babel-%E7%A0%94%E7%A9%B6-polyfill-vs-transpiler/">babel-研究-polyfill-vs-transpiler</a>，以及：<a href="https://stackoverflow.com/questions/31205640/what-is-the-difference-between-polyfill-and-transpiler">what-is-the-difference-between-polyfill-and-transpiler</a>。</p>
+<ul>
+<li>jsx</li>
+</ul>
+<p><code>typescript</code> 支持 <code>jsx</code> 的语法，其包含 <code>jsx</code>、<code>jsx-factory</code> 两个配置。</p>
+<p><code>jsx</code> 有三个可选值：</p>
+<p><code>preserve</code></p>
+<blockquote>
+<p><code>tsc</code> 在编译的时候不对 <code>jsx</code> 语法进行转换，原样保存到输出文件中。对 <code>jsx</code> 语法的转换留给 <a href="https://babeljs.io/docs/en/babel-plugin-transform-react-jsx/">babel-plugin</a> 等其他工具。该配置下，输出文件是一个 <code>.jsx</code>，另：这是默认的配置</p>
+</blockquote>
+<p><code>react</code></p>
+<blockquote>
+<p>把 <code>jsx</code> 语法转化为 <code>React.createElement</code>。参考 <a href="https://luncher.github.io/2020/07/29/%E4%BB%8E-typescript-%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0-React-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">从-typescript-的角度学习-React-的基本概念</a>，<code>jsx</code> 其实是 <code>createElement</code> 的语法糖。该配置下，输出文件是一个 <code>.js</code> 文件</p>
+</blockquote>
+<p><code>react-native</code></p>
+<blockquote>
+<p>同 <code>preserve</code> 但是输出文件是一个 <code>.js</code> 文件。</p>
+</blockquote>
+<p>注意：</p>
+<blockquote>
+<p>因为会跟 <code>jsx</code> 语法冲突，<code>jsx</code>/<code>tsx</code> 文件中不能使用 <code>&lt;foo&gt;</code> 来做类型断言</p>
+</blockquote>
+<ul>
+<li>jsxFactory<blockquote>
+<p>该配置配合 <code>jsx: react</code> 替换默认的 <code>React.createElement</code>，比如 <code>preact</code> 的实现等。</p>
+</blockquote>
+</li>
+</ul>
+<p>其他信息，参考：<a href="https://www.typescriptlang.org/docs/handbook/jsx.html">handbook-jsx</a></p>
+<hr>
+<h3 id="对-js-的支持"><a href="#对-js-的支持" class="headerlink" title="对 js 的支持"></a>对 js 的支持</h3><ul>
+<li>allowJs</li>
+</ul>
+<p>默认的 <code>tsc</code> 编译只会加载 <code>ts</code> 和 <code>tsx</code> 文件，如果还需要编译 <code>js</code> 、或 <code>jsx</code>，则需要把该选项打开。</p>
+<ul>
+<li>checkJs</li>
+</ul>
+<p><code>checkJs</code> 跟 <code>allowJs</code> 配合使用，默认 <code>tsc</code> 不对参与编译的 <code>js</code> 文件做类型检查，可以通过该配置项目，启用检查。</p>
+<hr>
+<h3 id="类型检查和-lint"><a href="#类型检查和-lint" class="headerlink" title="类型检查和 lint"></a>类型检查和 <code>lint</code></h3><h4 id="lint-检查配置"><a href="#lint-检查配置" class="headerlink" title="lint 检查配置"></a>lint 检查配置</h4><ul>
+<li><p>noUnusedLocals</p>
+<blockquote>
+<p>针对未使用的局部变量 lint 告警</p>
+</blockquote>
+</li>
+<li><p>noUnusedParameters</p>
+<blockquote>
+<p>针对未使用的函数参数 lint 告警</p>
+</blockquote>
+</li>
+<li><p>noImplicitReturns</p>
+<blockquote>
+<p>针对需要返回值但是没有返回的函数 lint 告警</p>
+</blockquote>
+</li>
+<li><p>noFallthroughCasesInSwitch</p>
+<blockquote>
+<p>针对没有 <code>default case</code> 的 <code>switch</code> 告警</p>
+</blockquote>
+</li>
+</ul>
+<p><code>tsc</code> 也支持部分 <code>lint</code> 检查能力，几个配置项目都比较直观。</p>
+<h4 id="类型检查配置"><a href="#类型检查配置" class="headerlink" title="类型检查配置"></a>类型检查配置</h4><p><code>ts</code> 提供了完整的类型检查机制，参考：<a href="https://luncher.github.io/2020/04/06/typescript-%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F/">typescript-严格模式</a>。</p>
+<hr>
+<h3 id="模块解析配置"><a href="#模块解析配置" class="headerlink" title="模块解析配置"></a>模块解析配置</h3><h4 id="相对路径加载-vs-非相对路径加载"><a href="#相对路径加载-vs-非相对路径加载" class="headerlink" title="相对路径加载 vs 非相对路径加载"></a>相对路径加载 vs 非相对路径加载</h4><p>相对路径加载定义，指的是以以下几个字符开始的加载目录：</p>
+<p>1、<code>/</code><br>2、<code>./</code><br>3、<code>../</code></p>
+<p>所有其他类型的 <code>import</code> 路径都被认为是非相对路径的加载例如：</p>
+<p><code>import jquery from &#39;jquery&#39;</code></p>
+<p>所有通过相对路径加载的模块，用户必须保证所在模块必须存在，不会走 <code>baseUrl</code>、<code>path mapping</code>、以及环境模块声明(<code>ambient module declaration</code>)。</p>
+<h4 id="模块解析策略"><a href="#模块解析策略" class="headerlink" title="模块解析策略"></a>模块解析策略</h4><p><code>moduleResolution</code> 配置项目用于指定模块的加载策略，<code>typescript</code> 模块解析分为两种策略：</p>
+<p>1、classic<br>2、node</p>
+<p>如果用户没有配置 <code>moduleResolution</code>，默认当 <code>module</code> 等于：<code>AMD</code> | <code>System</code> | <code>ES2015</code> 的时候，使用 <code>classic</code> 策略，其他 <code>module</code> 使用 <code>node</code> 策略。</p>
+<p><strong>classic</strong> 策略：</p>
+<p>1、相对模块</p>
+<p>假设当前文件：<code>/root/src/folder/A.ts</code> 有模块加载语句：</p>
+<p><code>import { b } from &quot;./moduleB&quot;</code></p>
+<p>那么 <code>tsc</code> 将会查找如下文件：</p>
+<p>a、<code>/root/src/folder/moduleB.ts</code><br>b、<code>/root/src/folder/moduleB.d.ts</code></p>
+<p>2、非相对模块</p>
+<p>假设当前文件：<code>/root/src/folder/A.ts</code> 有模块加载语句：</p>
+<p><code>import { b } from &quot;moduleB&quot;</code></p>
+<p>那么 <code>tsc</code> 将会按照如下顺序查找模块：</p>
+<p>a、<code>/root/src/folder/moduleB.ts</code><br>b、<code>/root/src/folder/moduleB.d.ts</code><br>c、<code>/root/src/moduleB.ts</code><br>d、<code>/root/src/moduleB.d.ts</code><br>e、<code>/root/moduleB.ts</code><br>f、<code>/root/moduleB.d.ts</code><br>g、<code>/moduleB.ts</code><br>h、<code>/moduleB.d.ts</code></p>
+<p><strong>node</strong> 策略</p>
+<p>这里简要说说 <code>node.js</code> 如何做模块加载的，标准的 <code>node.js</code> 模块加载使用 <code>require</code> 函数加载模块。</p>
+<p>假设有 <code>/root/src/moduleA.js</code> 文件包含一个 <code>require</code> 语句：</p>
+<p><code>var x = require(&quot;./moduleB&quot;);</code></p>
+<p><code>node.js</code> 将会按照以下顺序查找模块：</p>
+<p>a、查找 <code>/root/src/moduleB.js</code><br>b、如果 <code>/root/src/moduleB</code> 是一个文件夹，文件夹包含 <code>package.json</code> ，<code>package.json</code> 下有个 <code>main</code> 字段指定了具体了文件<br>c、如果 <code>/root/src/moduleB</code> 是一个文件夹，文件夹包含一个 <code>index.js</code> 文件，该文件被认为是这个文件夹的导出模块</p>
+<p>假设有 <code>/root/src/moduleA.js</code> 文件包含一个 <code>require</code> 语句：<br><code>var x = require(&quot;moduleB&quot;);</code></p>
+<p><code>node.js</code> 将会按照以下顺序查找模块：</p>
+<p>a、<code>/root/src/node_modules/moduleB.js</code><br>b、<code>/root/src/node_modules/moduleB/package.json (如果指定了</code>main<code>字段)</code><br>c、<code>/root/src/node_modules/moduleB/index.js</code><br>d、<code>/root/node_modules/moduleB.js</code><br>e、<code>/root/node_modules/moduleB/package.json (如果指定了</code>main<code>字段)</code><br>f、<code>/root/node_modules/moduleB/index.js</code></p>
+<p>g、<code>/node_modules/moduleB.js</code><br>h、<code>/node_modules/moduleB/package.json (如果指定了</code>main<code>字段)</code><br>i、<code>/node_modules/moduleB/index.js</code></p>
+<p>完整的过程请参考：<a href="https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders">modules_loading_from_node_modules_folders</a>。</p>
+<p><strong>typescript</strong> 版本的 <code>node</code> 加载策略</p>
+<p>该模式和 <code>node.js</code> 版本非常相识，不同在于：</p>
+<p>1、默认加载: <code>.ts</code>、<code>.tsx</code>、<code>.d.ts</code> 文件（如果配置了 <code>allowJs</code>会加载: <code>.js</code>、<code>.jsx</code>、<code>.d.js</code>）<br>3、查找 <code>package.json</code> 的 <code>types</code> 字段，而不是 <code>main</code> 字段</p>
+<p>假设有 <code>/root/src/moduleA.js</code> 文件包含一个 <code>import</code> 语句：</p>
+<p><code>import { b } from &quot;./moduleB&quot;</code></p>
+<p><code>tsc</code> 将会按照如下顺序查找模块：</p>
+<p>a、<code>/root/src/moduleB.ts</code><br>b、<code>/root/src/moduleB.tsx</code><br>c、<code>/root/src/moduleB.d.ts</code><br>d、<code>/root/src/moduleB/package.json (if it specifies a &quot;types&quot; property)</code><br>e、<code>/root/src/moduleB/index.ts</code><br>f、<code>/root/src/moduleB/index.tsx</code><br>g、<code>/root/src/moduleB/index.d.ts</code></p>
+<p>同样的假设有 <code>/root/moduleA.js</code> 文件包含一个 <code>import</code> 语句：</p>
+<p><code>import { b } from &quot;moduleB&quot;</code></p>
+<p><code>tsc</code> 将会按照如下顺序查找模块：</p>
+<p>1、<code>/root/node_modules/moduleB.ts</code><br>2、<code>/root/node_modules/moduleB.tsx</code><br>3、<code>/root/node_modules/moduleB.d.ts</code><br>4、<code>/root/node_modules/moduleB/package.json (如果指定了</code>types<code>属性)</code><br>5、<code>/root/node_modules/@types/moduleB.d.ts</code><br>6、<code>/root/node_modules/moduleB/index.ts</code><br>7、<code>/root/node_modules/moduleB/index.tsx</code><br>8、<code>/root/node_modules/moduleB/index.d.ts</code></p>
+<p>9、<code>/node_modules/moduleB.ts</code><br>10、<code>/node_modules/moduleB.tsx</code><br>11、<code>/node_modules/moduleB.d.ts</code><br>12、<code>/node_modules/moduleB/package.json (如果指定了</code>types<code>属性)</code><br>13、<code>/node_modules/@types/moduleB.d.ts</code><br>14、<code>/node_modules/moduleB/index.ts</code><br>15、<code>/node_modules/moduleB/index.tsx</code><br>16、<code>/node_modules/moduleB/index.d.ts</code></p>
+<p><strong>其他模块解析配置</strong></p>
+<ul>
+<li>baseUrl</li>
+</ul>
+<p><code>baseUrl</code> 用于告诉编译器去哪里查找模块。当设置 <code>baseUrl</code> 的时候，所有非相对路径模块的模块导入，都被认为相对于 <code>baseUrl</code> 设置的路径。<code>baseUrl</code> 对相对路径的导入没有影响。</p>
+<ul>
+<li>Path mapping<br><code>Path mapping</code> 相对应模块导入的快捷方式，举个例子，假设我们希望 <code>import jquery from &#39;jquery&#39;</code> 实际导入的是：<code>node_modules/jquery/dist/jquery.slim.min.js</code>，可以这么设置：</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"baseUrl"</span>: <span class="string">"."</span>, <span class="comment">// 当需要使用 `paths` 时必须设置</span></span><br><span class="line">    <span class="attr">"paths"</span>: &#123;</span><br><span class="line">      <span class="attr">"jquery"</span>: [<span class="string">"node_modules/jquery/dist/jquery"</span>] <span class="comment">// 路径相对于 `baseUrl`</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Virtual Directories(<code>rootDirs</code>)</li>
+</ul>
+<p><code>rootDirs</code> 用于把多个不同文件夹内的模块 <code>import</code> 可以像在查找同一个文件夹的模块。编译输出的时候，多个文件夹内的模块，会被合并成单个文件夹。</p>
+<ul>
+<li>traceResolution</li>
+</ul>
+<p>上面看到了模块解析有时候比较繁琐 <code>traceResolution</code> 是一个方便诊断模块加载问题的语法。它会列出 <code>tsc</code> 执行的时候，模块加载的顺序。</p>
+<ul>
+<li>allowSyntheticDefaultImports</li>
+</ul>
+<p>当我们加载某个没有 <code>default export</code> 的第三方包的时候，通常的写法如下：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> React <span class="keyword">from</span> <span class="string">'react'</span></span><br></pre></td></tr></table></figure>
+<p>开启了 <code>allowSyntheticDefaultImports</code> 的时候，写法可以变成：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span></span><br></pre></td></tr></table></figure>
+<p>需要注意的是，<code>allowSyntheticDefaultImports</code> 只会绕过类型检查，并不会对 <code>tsc</code> 编译出来的 <code>js</code> 代码产生影响。这个时候，需要的是 <code>esModuleInterop</code> 配置项目</p>
+<ul>
+<li>esModuleInterop</li>
+</ul>
+<p><code>typescript</code> 采用标准的 <code>es modules</code> 标准。但是大量的第三方包采用的是 <code>common.js</code> 的模块规范。 <code>esModuleInterop</code> 配置项为 <code>es module</code> 模块导入 <code>commonjs</code> 模块提供便利。</p>
+<p>通常 <code>node.js</code> 模块的导出方式为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    foo: bar</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>没有 <code>export default</code>，所以我们在使用这类包的时候，只能写成：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> React <span class="keyword">from</span> <span class="string">'react'</span></span><br></pre></td></tr></table></figure>
+<p>开启 <code>esModuleInterop</code> 配置项目之后，可以写成：</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"><span class="built_in">console</span>.log(React.Children)</span><br></pre></td></tr></table></figure>
+<p><code>tsc</code> 会把上述代码编译成：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">"use strict"</span>;</span><br><span class="line"><span class="keyword">var</span> __importDefault = (<span class="keyword">this</span> &amp;&amp; <span class="keyword">this</span>.__importDefault) || <span class="function"><span class="keyword">function</span> (<span class="params">mod</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (mod &amp;&amp; mod.__esModule) ? mod : &#123; <span class="string">"default"</span>: mod &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">Object</span>.defineProperty(exports, <span class="string">"__esModule"</span>, &#123; <span class="attr">value</span>: <span class="literal">true</span> &#125;);</span><br><span class="line"><span class="keyword">var</span> react_1 = __importDefault(<span class="built_in">require</span>(<span class="string">"react"</span>));</span><br><span class="line"><span class="built_in">console</span>.log(react_1.default.Children);</span><br></pre></td></tr></table></figure>
+<p>注意：开启 <code>esModuleInterop</code> 后，自动会开启 <code>allowSyntheticDefaultImports</code> 配置项。</p>
+<ul>
+<li>typeRoots</li>
+</ul>
+<p><code>typeRoots</code> 配置项主要用于，指定编译的时候，类型主要包含哪些类型什么的文件夹。默认配置为：<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./node_modules/@types/,</span><br><span class="line">../node_modules/@types/,</span><br><span class="line">../../node_modules/@types/</span><br></pre></td></tr></table></figure></p>
+<p>当项目中有自定义类型文件夹的时候，可以通过该配置项来指定。如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"compilerOptions"</span>: &#123;</span><br><span class="line">    <span class="attr">"typeRoots"</span>: [<span class="string">"./typings"</span>, <span class="string">"node_modules/@types"</span>]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>types</li>
+</ul>
+<p>跟 <code>typeRoots</code> 不同的是，<code>types</code> 指定的是具体的某几个包的类型数组，而 <code>typeRoots</code> 指定某个文件夹，文件下的所有模块都会被包含。</p>
+<h3 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h3><ul>
+<li>importHelpers</li>
+</ul>
+<p><code>tsconfig</code> 在开启某些配置项的时候，<code>tsc</code> 在编译输出文件内会插入而外的 <code>helper</code> 代码，如：</p>
+<p>a、<code>extending class</code><br>b、<code>spreading arrays or objects</code>(展开语法)<br>c、<code>async</code> 操作</p>
+<p>为了避免在每个输出的代码文件都有同样的一份 <code>helper</code> 代码，<code>ts</code> 提供了一个 <a href="https://www.npmjs.com/package/tslib">tslib</a> 包，包含了所有 <code>helper</code> 代码的实现。注意：<code>tslib</code> 需要手动安装。</p>
+<ul>
+<li>Source Map 配置</li>
+</ul>
+<p><code>declaration</code> 为编译输出的每个文件都提供一个类型声明文件，描述该文件导出的模块信息。</p>
+<p><code>declarationMap</code> 为每个类型声明文件，都额外生成一份 <code>source map</code> 文件。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ul>
+<li><a href="https://www.typescriptlang.org/v2/en/tsconfig">tsconfig reference</a></li>
+<li><a href="https://www.typescriptlang.org/docs/handbook/modules.html">modules</a></li>
+<li><a href="https://www.typescriptlang.org/docs/handbook/module-resolution.html">module-resolution</a></li>
+<li><a href="https://nodejs.org/api/modules.html">node.js-modules</a></li>
+<li><a href="https://www.typescriptlang.org/docs/handbook/jsx.html">handbook-jsx</a></li>
+</ul>
+
+        </div>
+        
+        
+        
+    </div>
+</div>
+
+
+
+
+
+<div class="card card-transparent">
+    <div class="level post-navigation is-flex-wrap is-mobile">
+        
+        <div class="level-start">
+            <a class="level level-item has-link-grey  article-nav-prev" href="/2020/07/29/%E4%BB%8E-typescript-%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0-React-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/">
+                <i class="level-item fas fa-chevron-left"></i>
+                <span class="level-item">从 typescript 的角度学习 React 的基本概念</span>
+            </a>
+        </div>
+        
+        
+        <div class="level-end">
+            <a class="level level-item has-link-grey  article-nav-next" href="/2020/05/24/Mobx-Hooks/">
+                <span class="level-item">Mobx Hooks</span>
+                <i class="level-item fas fa-chevron-right"></i>
+            </a>
+        </div>
+        
+    </div>
+</div>
+
+
+</div>
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen  has-order-1 column-left ">
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <nav class="level">
+            <div class="level-item has-text-centered" style="flex-shrink: 1">
+                <div>
+                    
+                    <figure class="image is-128x128 has-mb-6">
+                        <img class="is-rounded" src="/images/logo.png" alt="chen.lin">
+                    </figure>
+                    
+                    <p class="is-size-4 is-block">
+                        chen.lin
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-block">
+                        keep forward.
+                    </p>
+                    
+                    
+                    <p class="is-size-6 is-flex is-flex-center has-text-grey">
+                        <i class="fas fa-map-marker-alt has-mr-7"></i>
+                        <span>上海-中国</span>
+                    </p>
+                    
+                </div>
+            </div>
+        </nav>
+        <nav class="level is-mobile">
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        文章
+                    </p>
+                    <a href="/archives">
+                        <p class="title has-text-weight-normal">
+                            90
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        分类
+                    </p>
+                    <a href="/categories">
+                        <p class="title has-text-weight-normal">
+                            19
+                        </p>
+                    </a>
+                </div>
+            </div>
+            <div class="level-item has-text-centered is-marginless">
+                <div>
+                    <p class="heading">
+                        标签
+                    </p>
+                    <a href="/tags">
+                        <p class="title has-text-weight-normal">
+                            62
+                        </p>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="level">
+            <a class="level-item button is-link is-rounded" href="https://github.com/luncher" target="_blank" rel="noopener">
+                关注我</a>
+        </div>
+        
+        
+        
+        <div class="level is-mobile">
+            
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
+                title="Github" href="https://github.com/luncher">
+                
+                <i class="fab fa-github"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
+                title="Twitter" href="https://twitter.com/gakiclin1">
+                
+                <i class="fab fa-twitter"></i>
+                
+            </a>
+            
+            <a class="level-item button is-white is-marginless" target="_blank" rel="noopener"
+                title="RSS" href="/">
+                
+                <i class="fas fa-rss"></i>
+                
+            </a>
+            
+        </div>
+        
+    </div>
+</div>
+    
+        
+    
+        
+<div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                分类
+            </h3>
+            <ul class="menu-list">
+            <li>
+        <a class="level is-marginless" href="/categories/Vue%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0/">
+            <span class="level-start">
+                <span class="level-item">Vue源码分析系列文章</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/javascript/">
+            <span class="level-start">
+                <span class="level-item">javascript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">3</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/lerning/">
+            <span class="level-start">
+                <span class="level-item">lerning</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/mobx/">
+            <span class="level-start">
+                <span class="level-item">mobx</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/mobx/statemanager/">
+            <span class="level-start">
+                <span class="level-item">statemanager</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/react/">
+            <span class="level-start">
+                <span class="level-item">react</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/server/">
+            <span class="level-start">
+                <span class="level-item">server</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">25</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/server/nodejs/">
+            <span class="level-start">
+                <span class="level-item">nodejs</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/typescript/">
+            <span class="level-start">
+                <span class="level-item">typescript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/vscode/">
+            <span class="level-start">
+                <span class="level-item">vscode</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">3</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/web/">
+            <span class="level-start">
+                <span class="level-item">web</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">45</span>
+            </span>
+        </a><ul><li>
+        <a class="level is-marginless" href="/categories/web/mobx/">
+            <span class="level-start">
+                <span class="level-item">mobx</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/web/typescript/">
+            <span class="level-start">
+                <span class="level-item">typescript</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li></ul></li><li>
+        <a class="level is-marginless" href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/">
+            <span class="level-start">
+                <span class="level-item">数据库</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/">
+            <span class="level-start">
+                <span class="level-item">系统监控</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">2</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">
+            <span class="level-start">
+                <span class="level-item">编程语言</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">
+            <span class="level-start">
+                <span class="level-item">设计模式</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li><li>
+        <a class="level is-marginless" href="/categories/%E8%BD%AF%E4%BB%B6%E5%BC%80%E5%8F%91/">
+            <span class="level-start">
+                <span class="level-item">软件开发</span>
+            </span>
+            <span class="level-end">
+                <span class="level-item tag">1</span>
+            </span>
+        </a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            标签云
+        </h3>
+        <a href="/tags/AMD/" style="font-size: 10px;">AMD</a> <a href="/tags/BlockChain/" style="font-size: 10px;">BlockChain</a> <a href="/tags/CMD/" style="font-size: 10px;">CMD</a> <a href="/tags/Quill/" style="font-size: 10px;">Quill</a> <a href="/tags/SVG/" style="font-size: 10px;">SVG</a> <a href="/tags/animation/" style="font-size: 10px;">animation</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/api/" style="font-size: 10px;">api</a> <a href="/tags/babel/" style="font-size: 10px;">babel</a> <a href="/tags/benchmark/" style="font-size: 10px;">benchmark</a> <a href="/tags/c/" style="font-size: 10px;">c</a> <a href="/tags/c/" style="font-size: 10px;">c++</a> <a href="/tags/cache/" style="font-size: 10px;">cache</a> <a href="/tags/cheatsheet/" style="font-size: 16px;">cheatsheet</a> <a href="/tags/codepush/" style="font-size: 10px;">codepush</a> <a href="/tags/commonjs/" style="font-size: 10px;">commonjs</a> <a href="/tags/computed/" style="font-size: 10px;">computed</a> <a href="/tags/context/" style="font-size: 12px;">context</a> <a href="/tags/crypto/" style="font-size: 10px;">crypto</a> <a href="/tags/css/" style="font-size: 20px;">css</a> <a href="/tags/database/" style="font-size: 12px;">database</a> <a href="/tags/debounce/" style="font-size: 10px;">debounce</a> <a href="/tags/es6/" style="font-size: 14px;">es6</a> <a href="/tags/golang/" style="font-size: 10px;">golang</a> <a href="/tags/h5/" style="font-size: 10px;">h5</a> <a href="/tags/hooks/" style="font-size: 12px;">hooks</a> <a href="/tags/html/" style="font-size: 10px;">html</a> <a href="/tags/http/" style="font-size: 12px;">http</a> <a href="/tags/inline-block/" style="font-size: 10px;">inline block</a> <a href="/tags/javascript/" style="font-size: 10px;">javascript</a> <a href="/tags/layout/" style="font-size: 10px;">layout</a> <a href="/tags/less/" style="font-size: 10px;">less</a> <a href="/tags/linux/" style="font-size: 10px;">linux</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/mixed-content/" style="font-size: 10px;">mixed-content</a> <a href="/tags/mobx/" style="font-size: 16px;">mobx</a> <a href="/tags/monitor/" style="font-size: 10px;">monitor</a> <a href="/tags/nginx/" style="font-size: 12px;">nginx</a> <a href="/tags/password/" style="font-size: 10px;">password</a> <a href="/tags/position/" style="font-size: 10px;">position</a> <a href="/tags/propertys/" style="font-size: 10px;">propertys</a> <a href="/tags/proxy/" style="font-size: 10px;">proxy</a> <a href="/tags/react/" style="font-size: 18px;">react</a> <a href="/tags/rest/" style="font-size: 10px;">rest</a> <a href="/tags/sailsjs/" style="font-size: 14px;">sailsjs</a> <a href="/tags/ssh/" style="font-size: 10px;">ssh</a> <a href="/tags/ssr/" style="font-size: 10px;">ssr</a> <a href="/tags/strict-mode/" style="font-size: 10px;">strict-mode</a> <a href="/tags/table/" style="font-size: 10px;">table</a> <a href="/tags/throttle/" style="font-size: 10px;">throttle</a> <a href="/tags/transition/" style="font-size: 10px;">transition</a> <a href="/tags/tsconfig/" style="font-size: 10px;">tsconfig</a> <a href="/tags/typescript/" style="font-size: 14px;">typescript</a> <a href="/tags/vue/" style="font-size: 10px;">vue</a> <a href="/tags/vuejs/" style="font-size: 10px;">vuejs</a> <a href="/tags/webpack/" style="font-size: 14px;">webpack</a> <a href="/tags/weex/" style="font-size: 10px;">weex</a> <a href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/" style="font-size: 10px;">发布订阅</a> <a href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/" style="font-size: 10px;">富文本编辑器</a> <a href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/" style="font-size: 10px;">编程语言</a> <a href="/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">观察者模式</a> <a href="/tags/%E9%87%8D%E6%9E%84/" style="font-size: 10px;">重构</a>
+    </div>
+</div>
+    
+    
+        <div class="column-right-shadow is-hidden-widescreen ">
+        
+            <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-31T05:37:19.000Z">2020-08-31</time></div>
+                    <a href="/2020/08/31/Duck-Type-vs-Structural-Type-vs-Nominal-Type/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Duck Type vs Structural Type vs Nominal Type</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-23T06:21:20.000Z">2020-08-23</time></div>
+                    <a href="/2020/08/23/Typescript-%E5%85%B8%E5%9E%8B%E7%9A%84%E7%B1%BB%E5%9E%8B%E9%97%AE%E9%A2%98/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Typescript 典型的类型问题</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/typescript/">typescript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-16T04:32:39.000Z">2020-08-16</time></div>
+                    <a href="/2020/08/16/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F-vs-%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85/" class="title has-link-black-ter is-size-6 has-text-weight-normal">观察者模式 vs 发布/订阅</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-10T18:31:52.000Z">2020-08-11</time></div>
+                    <a href="/2020/08/11/React-%E5%92%8C-Vue-%E7%9A%84-Location-%E5%90%8C%E6%AD%A5/" class="title has-link-black-ter is-size-6 has-text-weight-normal">React 和 Vue 的 Location 同步</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/web/">web</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-07-29T15:45:08.000Z">2020-07-29</time></div>
+                    <a href="/2020/07/29/%E4%BB%8E-typescript-%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0-React-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从 typescript 的角度学习 React 的基本概念</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/web/">web</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">9</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2014/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2014</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+        
+            <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/AMD/">
+                        <span class="tag">AMD</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/BlockChain/">
+                        <span class="tag">BlockChain</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/CMD/">
+                        <span class="tag">CMD</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Quill/">
+                        <span class="tag">Quill</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/SVG/">
+                        <span class="tag">SVG</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/animation/">
+                        <span class="tag">animation</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/antd/">
+                        <span class="tag">antd</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/api/">
+                        <span class="tag">api</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/babel/">
+                        <span class="tag">babel</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/benchmark/">
+                        <span class="tag">benchmark</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/c/">
+                        <span class="tag">c</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/c/">
+                        <span class="tag">c++</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/cache/">
+                        <span class="tag">cache</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/cheatsheet/">
+                        <span class="tag">cheatsheet</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/codepush/">
+                        <span class="tag">codepush</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/commonjs/">
+                        <span class="tag">commonjs</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/computed/">
+                        <span class="tag">computed</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/context/">
+                        <span class="tag">context</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/crypto/">
+                        <span class="tag">crypto</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/css/">
+                        <span class="tag">css</span>
+                        <span class="tag is-grey">11</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/database/">
+                        <span class="tag">database</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/debounce/">
+                        <span class="tag">debounce</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/es6/">
+                        <span class="tag">es6</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/golang/">
+                        <span class="tag">golang</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/h5/">
+                        <span class="tag">h5</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/hooks/">
+                        <span class="tag">hooks</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/html/">
+                        <span class="tag">html</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/http/">
+                        <span class="tag">http</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/inline-block/">
+                        <span class="tag">inline block</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/javascript/">
+                        <span class="tag">javascript</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/layout/">
+                        <span class="tag">layout</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/less/">
+                        <span class="tag">less</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linux/">
+                        <span class="tag">linux</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/log/">
+                        <span class="tag">log</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mixed-content/">
+                        <span class="tag">mixed-content</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mobx/">
+                        <span class="tag">mobx</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/monitor/">
+                        <span class="tag">monitor</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/nginx/">
+                        <span class="tag">nginx</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/password/">
+                        <span class="tag">password</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/position/">
+                        <span class="tag">position</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/propertys/">
+                        <span class="tag">propertys</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/proxy/">
+                        <span class="tag">proxy</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/react/">
+                        <span class="tag">react</span>
+                        <span class="tag is-grey">10</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/rest/">
+                        <span class="tag">rest</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/sailsjs/">
+                        <span class="tag">sailsjs</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ssh/">
+                        <span class="tag">ssh</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ssr/">
+                        <span class="tag">ssr</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/strict-mode/">
+                        <span class="tag">strict-mode</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/table/">
+                        <span class="tag">table</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/throttle/">
+                        <span class="tag">throttle</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/transition/">
+                        <span class="tag">transition</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/tsconfig/">
+                        <span class="tag">tsconfig</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/typescript/">
+                        <span class="tag">typescript</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/vue/">
+                        <span class="tag">vue</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/vuejs/">
+                        <span class="tag">vuejs</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/webpack/">
+                        <span class="tag">webpack</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/weex/">
+                        <span class="tag">weex</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+                        <span class="tag">发布订阅</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/">
+                        <span class="tag">富文本编辑器</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">
+                        <span class="tag">编程语言</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">
+                        <span class="tag">观察者模式</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E9%87%8D%E6%9E%84/">
+                        <span class="tag">重构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+        
+        </div>
+    
+</div>
+
+                
+
+
+
+
+<div class="column is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only has-order-3 column-right ">
+    
+        <div class="card widget">
+    <div class="card-content">
+        <h3 class="menu-label">
+            最新文章
+        </h3>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-31T05:37:19.000Z">2020-08-31</time></div>
+                    <a href="/2020/08/31/Duck-Type-vs-Structural-Type-vs-Nominal-Type/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Duck Type vs Structural Type vs Nominal Type</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-23T06:21:20.000Z">2020-08-23</time></div>
+                    <a href="/2020/08/23/Typescript-%E5%85%B8%E5%9E%8B%E7%9A%84%E7%B1%BB%E5%9E%8B%E9%97%AE%E9%A2%98/" class="title has-link-black-ter is-size-6 has-text-weight-normal">Typescript 典型的类型问题</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/typescript/">typescript</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-16T04:32:39.000Z">2020-08-16</time></div>
+                    <a href="/2020/08/16/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F-vs-%E5%8F%91%E5%B8%83-%E8%AE%A2%E9%98%85/" class="title has-link-black-ter is-size-6 has-text-weight-normal">观察者模式 vs 发布/订阅</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/">设计模式</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-08-10T18:31:52.000Z">2020-08-11</time></div>
+                    <a href="/2020/08/11/React-%E5%92%8C-Vue-%E7%9A%84-Location-%E5%90%8C%E6%AD%A5/" class="title has-link-black-ter is-size-6 has-text-weight-normal">React 和 Vue 的 Location 同步</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/web/">web</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+        <article class="media">
+            
+            <div class="media-content">
+                <div class="content">
+                    <div><time class="has-text-grey is-size-7 is-uppercase" datetime="2020-07-29T15:45:08.000Z">2020-07-29</time></div>
+                    <a href="/2020/07/29/%E4%BB%8E-typescript-%E7%9A%84%E8%A7%92%E5%BA%A6%E5%AD%A6%E4%B9%A0-React-%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5/" class="title has-link-black-ter is-size-6 has-text-weight-normal">从 typescript 的角度学习 React 的基本概念</a>
+                    <p class="is-size-7 is-uppercase">
+                        <a class="has-link-grey -link" href="/categories/web/">web</a>
+                    </p>
+                </div>
+            </div>
+        </article>
+        
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+        <h3 class="menu-label">
+            归档
+        </h3>
+        <ul class="menu-list">
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">6</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2020/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2020</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/02/">
+                <span class="level-start">
+                    <span class="level-item">二月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2019/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2019</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">3</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2018/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2018</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2017/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2017</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">4</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/08/">
+                <span class="level-start">
+                    <span class="level-item">八月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">9</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/07/">
+                <span class="level-start">
+                    <span class="level-item">七月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/06/">
+                <span class="level-start">
+                    <span class="level-item">六月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/05/">
+                <span class="level-start">
+                    <span class="level-item">五月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/04/">
+                <span class="level-start">
+                    <span class="level-item">四月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/03/">
+                <span class="level-start">
+                    <span class="level-item">三月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2016/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2016</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/11/">
+                <span class="level-start">
+                    <span class="level-item">十一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">2</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2015/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2015</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2014/01/">
+                <span class="level-start">
+                    <span class="level-item">一月 2014</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/12/">
+                <span class="level-start">
+                    <span class="level-item">十二月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/10/">
+                <span class="level-start">
+                    <span class="level-item">十月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="level is-marginless" href="/archives/2013/09/">
+                <span class="level-start">
+                    <span class="level-item">九月 2013</span>
+                </span>
+                <span class="level-end">
+                    <span class="level-item tag">1</span>
+                </span>
+            </a>
+        </li>
+        
+        </ul>
+        </div>
+    </div>
+</div>
+    
+        <div class="card widget">
+    <div class="card-content">
+        <div class="menu">
+            <h3 class="menu-label">
+                标签
+            </h3>
+            <div class="field is-grouped is-grouped-multiline">
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/AMD/">
+                        <span class="tag">AMD</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/BlockChain/">
+                        <span class="tag">BlockChain</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/CMD/">
+                        <span class="tag">CMD</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/Quill/">
+                        <span class="tag">Quill</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/SVG/">
+                        <span class="tag">SVG</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/animation/">
+                        <span class="tag">animation</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/antd/">
+                        <span class="tag">antd</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/api/">
+                        <span class="tag">api</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/babel/">
+                        <span class="tag">babel</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/benchmark/">
+                        <span class="tag">benchmark</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/c/">
+                        <span class="tag">c</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/c/">
+                        <span class="tag">c++</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/cache/">
+                        <span class="tag">cache</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/cheatsheet/">
+                        <span class="tag">cheatsheet</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/codepush/">
+                        <span class="tag">codepush</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/commonjs/">
+                        <span class="tag">commonjs</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/computed/">
+                        <span class="tag">computed</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/context/">
+                        <span class="tag">context</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/crypto/">
+                        <span class="tag">crypto</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/css/">
+                        <span class="tag">css</span>
+                        <span class="tag is-grey">11</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/database/">
+                        <span class="tag">database</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/debounce/">
+                        <span class="tag">debounce</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/es6/">
+                        <span class="tag">es6</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/golang/">
+                        <span class="tag">golang</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/h5/">
+                        <span class="tag">h5</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/hooks/">
+                        <span class="tag">hooks</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/html/">
+                        <span class="tag">html</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/http/">
+                        <span class="tag">http</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/inline-block/">
+                        <span class="tag">inline block</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/javascript/">
+                        <span class="tag">javascript</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/layout/">
+                        <span class="tag">layout</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/less/">
+                        <span class="tag">less</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/linux/">
+                        <span class="tag">linux</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/log/">
+                        <span class="tag">log</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mixed-content/">
+                        <span class="tag">mixed-content</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/mobx/">
+                        <span class="tag">mobx</span>
+                        <span class="tag is-grey">4</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/monitor/">
+                        <span class="tag">monitor</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/nginx/">
+                        <span class="tag">nginx</span>
+                        <span class="tag is-grey">2</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/password/">
+                        <span class="tag">password</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/position/">
+                        <span class="tag">position</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/propertys/">
+                        <span class="tag">propertys</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/proxy/">
+                        <span class="tag">proxy</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/react/">
+                        <span class="tag">react</span>
+                        <span class="tag is-grey">10</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/rest/">
+                        <span class="tag">rest</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/sailsjs/">
+                        <span class="tag">sailsjs</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ssh/">
+                        <span class="tag">ssh</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/ssr/">
+                        <span class="tag">ssr</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/strict-mode/">
+                        <span class="tag">strict-mode</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/table/">
+                        <span class="tag">table</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/throttle/">
+                        <span class="tag">throttle</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/transition/">
+                        <span class="tag">transition</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/tsconfig/">
+                        <span class="tag">tsconfig</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/typescript/">
+                        <span class="tag">typescript</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/vue/">
+                        <span class="tag">vue</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/vuejs/">
+                        <span class="tag">vuejs</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/webpack/">
+                        <span class="tag">webpack</span>
+                        <span class="tag is-grey">3</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/weex/">
+                        <span class="tag">weex</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">
+                        <span class="tag">发布订阅</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E5%AF%8C%E6%96%87%E6%9C%AC%E7%BC%96%E8%BE%91%E5%99%A8/">
+                        <span class="tag">富文本编辑器</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">
+                        <span class="tag">编程语言</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F/">
+                        <span class="tag">观察者模式</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+                <div class="control">
+                    <a class="tags has-addons" href="/tags/%E9%87%8D%E6%9E%84/">
+                        <span class="tag">重构</span>
+                        <span class="tag is-grey">1</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+    
+    
+</div>
+
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+    <div class="container">
+        <div class="level">
+            <div class="level-start has-text-centered-mobile">
+                <a class="footer-logo is-block has-mb-6" href="/">
+                
+                    <img src="/images/favicon.ico" alt="tsconfig 必知必会" height="28">
+                
+                </a>
+                <p class="is-size-7">
+                &copy; 2020 clin&nbsp;
+                Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> & <a
+                        href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a>
+                
+                </p>
+            </div>
+            <div class="level-end">
+            
+                <div class="field has-addons is-flex-center-mobile has-mt-5-mobile is-flex-wrap is-flex-middle">
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/">
+                        
+                        <i class="fab fa-creative-commons"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/">
+                        
+                        <i class="fab fa-creative-commons-by"></i>
+                        
+                    </a>
+                </p>
+                
+                <p class="control">
+                    <a class="button is-white is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus">
+                        
+                        <i class="fab fa-github"></i>
+                        
+                    </a>
+                </p>
+                
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</footer>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script>
+<script>moment.locale("zh-CN");</script>
+
+
+<script>
+var IcarusThemeSettings = {
+    site: {
+        url: 'https://luncher.github.io',
+        external_link: {"enable":true,"exclude":[]}
+    },
+    article: {
+        highlight: {
+            clipboard: true,
+            fold: 'unfolded'
+        }
+    }
+};
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script>
+
+
+
+
+
+<script src="/js/animation.js"></script>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script>
+<script src="/js/gallery.js" defer></script>
+
+
+
+<div id="outdated">
+    <h6>Your browser is out-of-date!</h6>
+    <p>Update your browser to view this website correctly. <a id="btnUpdateBrowser" href="http://outdatedbrowser.com/">Update
+            my browser now </a></p>
+    <p class="last"><a href="#" id="btnCloseUpdateBrowser" title="Close">&times;</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/outdatedbrowser@1.1.5/outdatedbrowser/outdatedbrowser.min.js" defer></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        outdatedBrowser({
+            bgColor: '#f25648',
+            color: '#ffffff',
+            lowerThan: 'flex'
+        });
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.5/unpacked/MathJax.js?config=TeX-MML-AM_CHTML" defer></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    MathJax.Hub.Config({
+        'HTML-CSS': {
+            matchFontHeight: false
+        },
+        SVG: {
+            matchFontHeight: false
+        },
+        CommonHTML: {
+            matchFontHeight: false
+        },
+        tex2jax: {
+            inlineMath: [
+                ['$','$'],
+                ['\\(','\\)']
+            ]
+        }
+    });
+});
+</script>
+
+
+<a id="back-to-top" title="回到顶端" href="javascript:;">
+    <i class="fas fa-chevron-up"></i>
+</a>
+<script src="/js/back-to-top.js" defer></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="/js/main.js" defer></script>
+
+    
+    <div class="searchbox ins-search">
+    <div class="searchbox-container ins-search-container">
+        <div class="searchbox-input-wrapper">
+            <input type="text" class="searchbox-input ins-search-input" placeholder="想要查找什么..." />
+            <span class="searchbox-close ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="searchbox-result-wrapper ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: '文章',
+                PAGES: '页面',
+                CATEGORIES: '分类',
+                TAGS: '标签',
+                UNTITLED: '(无标题)',
+            },
+            CONTENT_URL: '/content.json',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script src="/js/insight.js" defer></script>
+<link rel="stylesheet" href="/css/search.css">
+<link rel="stylesheet" href="/css/insight.css">
+    
+</body>
+</html>
